@@ -3,40 +3,33 @@ package me.mrCookieSlime.quicksell;
 import me.mrCookieSlime.quicksell.SellEvent.Type;
 
 public class Transaction {
-	
-	long timestamp;
-	int items;
-	double money;
-	Type type;
-	
-	public Transaction(String value) {
-		timestamp = Long.valueOf(value.split(" __ ")[0]);
-		type = Type.valueOf(value.split(" __ ")[1]);
-		items = Integer.parseInt(value.split(" __ ")[2]);
-		money = Double.valueOf(value.split(" __ ")[3]);
-	}
 
-	public Transaction(long timestamp, Type type, int soldItems, double money) {
-		this.timestamp = timestamp;
-		this.type = type;
-		this.items = soldItems;
-		this.money = money;
-	}
+  long timestamp;
+  int items;
+  double money;
+  Type type;
 
-	public int getItemsSold() {
-		return items;
-	}
+  /**
+   * A transaction handles any exchange of items for money through QuickSell.
+   *
+   * @param timestamp The time that the items were sold
+   * @param type      The way that the item was sold
+   * @param soldItems The items that were sold to the server
+   * @param money     The amount of money which should be received.
+   */
+  public Transaction(long timestamp, Type type, int soldItems, double money) {
+    this.timestamp = timestamp;
+    this.type = type;
+    this.items = soldItems;
+    this.money = money;
+  }
 
-	public double getMoney() {
-		return money;
-	}
-	
-	public static int getItemsSold(String string) {
-		return Integer.parseInt(string.split(" __ ")[2]);
-	}
-	
-	public static double getMoney(String string) {
-		return Double.valueOf(string.split(" __ ")[3]);
-	}
+  public static int getItemsSold(String string) {
+    return Integer.parseInt(string.split(" __ ")[2]);
+  }
+
+  public static double getMoney(String string) {
+    return Double.parseDouble(string.split(" __ ")[3]);
+  }
 
 }
