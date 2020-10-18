@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell.boosters;
+package me.mrCookieSlime.quicksell.boosters;
 
 import java.io.File;
 import java.text.ParseException;
@@ -17,7 +17,7 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage.ClickAction;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage.HoverAction;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
-import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.quicksell.QuickSell;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell;
+package me.mrCookieSlime.quicksell;
 
 public enum ShopStatus {
 

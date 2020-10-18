@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell;
+package me.mrCookieSlime.quicksell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +19,9 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Player.PlayerInventory;
 import me.mrCookieSlime.PrisonUtils.Backpacks;
-import me.mrCookieSlime.QuickSell.SellEvent.Type;
-import me.mrCookieSlime.QuickSell.boosters.Booster;
-import me.mrCookieSlime.QuickSell.boosters.BoosterType;
+import me.mrCookieSlime.quicksell.SellEvent.Type;
+import me.mrCookieSlime.quicksell.boosters.Booster;
+import me.mrCookieSlime.quicksell.boosters.BoosterType;
 
 public class Shop {
 	

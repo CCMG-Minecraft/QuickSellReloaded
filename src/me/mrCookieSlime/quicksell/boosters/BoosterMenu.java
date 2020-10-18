@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell.boosters;
+package me.mrCookieSlime.quicksell.boosters;
 
 import java.util.ArrayList;
 import java.util.List;

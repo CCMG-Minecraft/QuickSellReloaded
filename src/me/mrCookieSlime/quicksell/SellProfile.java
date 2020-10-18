@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell;
+package me.mrCookieSlime.quicksell;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import me.mrCookieSlime.QuickSell.SellEvent.Type;
+import me.mrCookieSlime.quicksell.SellEvent.Type;
 
 import org.bukkit.entity.Player;
 
