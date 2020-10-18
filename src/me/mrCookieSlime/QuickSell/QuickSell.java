@@ -1,5 +1,7 @@
 package me.mrCookieSlime.QuickSell;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.PaperCommandManager;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -14,6 +16,18 @@ import me.mrCookieSlime.CSCoreLibSetup.CSCoreLibLoader;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
 import me.mrCookieSlime.QuickSell.boosters.PrivateBooster;
 import me.mrCookieSlime.QuickSell.boosters.XpBoosterListener;
+import me.mrCookieSlime.QuickSell.commands.BoosterCommand;
+import me.mrCookieSlime.QuickSell.commands.BoosterListCommand;
+import me.mrCookieSlime.QuickSell.commands.PricesCommand;
+import me.mrCookieSlime.QuickSell.commands.PrivateBoosterCommand;
+import me.mrCookieSlime.QuickSell.commands.QSBaseCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.EditorCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.MainCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.NpcLinkCommands;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.ReloadCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.StopBoostersCommand;
+import me.mrCookieSlime.QuickSell.commands.SellAllCommand;
+import me.mrCookieSlime.QuickSell.commands.SellCommand;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -30,6 +44,8 @@ public class QuickSell extends JavaPlugin {
   private static QuickSell instance;
   public Config npcs;
   private ShopEditor editor;
+
+  private PaperCommandManager paperCommandManager;
 
   private boolean citizens = false;
 
@@ -74,7 +90,38 @@ public class QuickSell extends JavaPlugin {
       setupEconomy();
       createBoosters();
       createScheduledTasks();
+
+      registerCommandManager();
     }
+  }
+
+  private void registerCommands(BaseCommand... commands) {
+    for (BaseCommand command : commands) {
+      paperCommandManager.registerCommand(command);
+    }
+  }
+
+  private void registerCommandManager() {
+    paperCommandManager = new PaperCommandManager(this);
+    registerCommands(
+        /*
+        /quicksell sub commands
+         */
+        new EditorCommand(),
+        new MainCommand(),
+        new NpcLinkCommands(),
+        new ReloadCommand(),
+        new StopBoostersCommand(),
+
+        /* other commands */
+        new BoosterCommand(),
+        new BoosterListCommand(),
+        new PricesCommand(),
+        new PrivateBoosterCommand(),
+        new QSBaseCommand(),
+        new SellAllCommand(),
+        new SellCommand()
+    );
   }
 
   private void createScheduledTasks() {
