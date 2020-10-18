@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell;
+package me.mrCookieSlime.QuickSell.transactions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import me.mrCookieSlime.QuickSell.SellEvent.Type;
+import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.transactions.SellEvent.Type;
 import org.bukkit.entity.Player;
 
 public class SellProfile {

@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell;
+package me.mrCookieSlime.QuickSell.transactions;
 
 import org.bukkit.entity.Player;
 

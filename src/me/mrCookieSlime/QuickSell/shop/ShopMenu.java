@@ -1,8 +1,9 @@
-package me.mrCookieSlime.QuickSell;
+package me.mrCookieSlime.QuickSell.shop;
 
 import java.util.Objects;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
+import me.mrCookieSlime.QuickSell.QuickSell;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
