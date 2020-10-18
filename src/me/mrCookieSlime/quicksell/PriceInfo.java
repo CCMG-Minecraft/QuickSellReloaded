@@ -30,18 +30,18 @@ public class PriceInfo {
     this.shop = shop;
     this.prices = new HashMap<>();
     this.order = new ArrayList<>();
-    this.amount = QuickSell.cfg.getInt("shops." + shop.getID() + ".amount");
+    this.amount = QuickSell.cfg.getInt("shops." + shop.getId() + ".amount");
 
     for (String key : Objects.requireNonNull(QuickSell.cfg.getConfiguration()
-        .getConfigurationSection("shops." + shop.getID() + ".price")).getKeys(false)) {
+        .getConfigurationSection("shops." + shop.getId() + ".price")).getKeys(false)) {
       if (!prices.containsKey(key)
-          && QuickSell.cfg.getDouble("shops." + shop.getID() + ".price." + key) > 0.0) {
+          && QuickSell.cfg.getDouble("shops." + shop.getId() + ".price." + key) > 0.0) {
         prices
-            .put(key, QuickSell.cfg.getDouble("shops." + shop.getID() + ".price." + key) / amount);
+            .put(key, QuickSell.cfg.getDouble("shops." + shop.getId() + ".price." + key) / amount);
       }
     }
 
-    for (String parent : QuickSell.cfg.getStringList("shops." + shop.getID() + ".inheritance")) {
+    for (String parent : QuickSell.cfg.getStringList("shops." + shop.getId() + ".inheritance")) {
       loadParent(parent);
     }
 
@@ -84,7 +84,7 @@ public class PriceInfo {
       }
     }
 
-    map.put(shop.getID(), this);
+    map.put(shop.getId(), this);
   }
 
   /**

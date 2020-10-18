@@ -89,7 +89,7 @@ public class SellListener implements Listener {
               if (item.contains(" ")) {
                 item = item.replace(" ", "_");
               }
-              shop.sellall(e.getPlayer(), item, Type.SELLALL);
+              shop.sellAll(e.getPlayer(), Type.SELLALL);
             } else {
               QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }
@@ -101,7 +101,7 @@ public class SellListener implements Listener {
                 item = item.replace(" ", "_");
               }
               Objects.requireNonNull(Shop.getHighestShop(e.getPlayer()))
-                  .sellall(e.getPlayer(), item, Type.SELLALL);
+                  .sellAll(e.getPlayer(), Type.SELLALL);
             } else {
               QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }

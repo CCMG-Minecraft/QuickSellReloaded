@@ -32,7 +32,7 @@ public class CitizensListener implements Listener {
         if (action.split(" ; ")[1].equalsIgnoreCase("SELL")) {
           ShopMenu.open(e.getClicker(), shop);
         } else if (shop.hasUnlocked(e.getClicker())) {
-          shop.sellall(e.getClicker(), "", Type.CITIZENS);
+          shop.sellAll(e.getClicker(), Type.CITIZENS);
         } else {
           QuickSell.local.sendTranslation(e.getClicker(), "messages.no-access", false);
         }

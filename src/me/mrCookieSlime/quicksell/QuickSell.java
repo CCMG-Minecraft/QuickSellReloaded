@@ -341,7 +341,7 @@ public class QuickSell extends JavaPlugin {
             Shop shop = Shop.getShop(args[0]);
             if (shop != null) {
               if (shop.hasUnlocked((Player) sender)) {
-                shop.sellall((Player) sender, "", Type.SELLALL);
+                shop.sellAll((Player) sender, Type.SELLALL);
               } else {
                 QuickSell.local.sendTranslation(sender, "messages.no-access", false);
               }
@@ -351,7 +351,7 @@ public class QuickSell extends JavaPlugin {
           } else if (cfg.getBoolean("options.open-only-shop-with-permission")) {
             if (Shop.getHighestShop((Player) sender) != null) {
               Objects.requireNonNull(Shop.getHighestShop((Player) sender))
-                  .sellall((Player) sender, "", Type.SELLALL);
+                  .sellAll((Player) sender, Type.SELLALL);
             } else {
               QuickSell.local.sendTranslation(sender, "messages.no-access", false);
             }
@@ -513,7 +513,7 @@ public class QuickSell extends JavaPlugin {
             if (args.length == 2) {
               List<String> list = new ArrayList<>();
               for (Shop shop : Shop.list()) {
-                list.add(shop.getID());
+                list.add(shop.getId());
               }
               list.add(args[1]);
               cfg.setValue("list", list);
@@ -533,7 +533,7 @@ public class QuickSell extends JavaPlugin {
             } else if (args.length == 2) {
               List<String> list = new ArrayList<>();
               for (Shop shop : Shop.list()) {
-                list.add(shop.getID());
+                list.add(shop.getId());
               }
               list.remove(args[1]);
               cfg.setValue("list", list);

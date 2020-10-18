@@ -55,7 +55,7 @@ public class ShopEditor implements Listener {
         case NEW_SHOP: {
           List<String> list = new ArrayList<>();
           for (Shop shop : Shop.list()) {
-            list.add(shop.getID());
+            list.add(shop.getId());
           }
 
           for (int i = list.size(); i <= (Integer) input.getValue(); i++) {
@@ -83,11 +83,11 @@ public class ShopEditor implements Listener {
         case RENAME: {
           Shop shop = (Shop) input.getValue();
 
-          QuickSell.cfg.setValue("shops." + shop.getID() + ".name", e.getMessage());
+          QuickSell.cfg.setValue("shops." + shop.getId() + ".name", e.getMessage());
           QuickSell.cfg.save();
           quicksell.reload();
 
-          openShopEditor(e.getPlayer(), Shop.getShop(shop.getID()));
+          openShopEditor(e.getPlayer(), Shop.getShop(shop.getId()));
           QuickSell.local.sendTranslation(e.getPlayer(), "editor.renamed-shop", false);
 
           this.input.remove(e.getPlayer().getUniqueId());
@@ -96,12 +96,12 @@ public class ShopEditor implements Listener {
         case SET_PERMISSION: {
           Shop shop = (Shop) input.getValue();
 
-          QuickSell.cfg.setValue("shops." + shop.getID() + ".permission",
+          QuickSell.cfg.setValue("shops." + shop.getId() + ".permission",
               e.getMessage().equals("none") ? "" : e.getMessage());
           QuickSell.cfg.save();
           quicksell.reload();
 
-          openShopEditor(e.getPlayer(), Shop.getShop(shop.getID()));
+          openShopEditor(e.getPlayer(), Shop.getShop(shop.getId()));
           QuickSell.local.sendTranslation(e.getPlayer(), "editor.permission-set-shop", false);
 
           this.input.remove(e.getPlayer().getUniqueId());
@@ -145,9 +145,9 @@ public class ShopEditor implements Listener {
             if (action.isShiftClicked()) {
               List<String> list = new ArrayList<>();
               for (Shop shop1 : Shop.list()) {
-                list.add(shop1.getID());
+                list.add(shop1.getId());
               }
-              list.remove(shop.getID());
+              list.remove(shop.getId());
               QuickSell.cfg.setValue("list", list);
               QuickSell.cfg.save();
               quicksell.reload();
@@ -196,14 +196,14 @@ public class ShopEditor implements Listener {
       p13.getInventory().getItemInMainHand().getType();
       if (p13.getInventory().getItemInMainHand().getType() != Material.AIR) {
         //noinspection deprecation
-        QuickSell.cfg.setValue("shops." + shop.getID() + ".itemtype",
+        QuickSell.cfg.setValue("shops." + shop.getId() + ".itemtype",
             p13.getInventory().getItemInMainHand().getType().toString() + "-" + Objects
                 .requireNonNull(p13.getInventory().getItemInMainHand().getData())
                 .getData());
         QuickSell.cfg.save();
         quicksell.reload();
       }
-      openShopEditor(p13, Shop.getShop(shop.getID()));
+      openShopEditor(p13, Shop.getShop(shop.getId()));
       return false;
     });
 
@@ -313,12 +313,12 @@ public class ShopEditor implements Listener {
             "&rShift + Right Click: &7Remove this Item from this Shop"));
         menu.addMenuClickHandler(index, (player, slot, stack, action) -> {
           if (action.isShiftClicked() && action.isRightClicked()) {
-            QuickSell.cfg.setValue("shops." + shop.getID() + ".price." + string, 0.0D);
+            QuickSell.cfg.setValue("shops." + shop.getId() + ".price." + string, 0.0D);
             QuickSell.cfg.save();
             quicksell.reload();
-            openShopContentEditor(p, Shop.getShop(shop.getID()), 1);
+            openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
           } else if (!action.isRightClicked()) {
-            openPriceEditor(p, Shop.getShop(shop.getID()), item, string,
+            openPriceEditor(p, Shop.getShop(shop.getId()), item, string,
                 shop.getPrices().getPrice(string));
           }
           return false;
@@ -359,10 +359,10 @@ public class ShopEditor implements Listener {
         "&rAdds the Item above to the Shop", "&rThis Option is going to ignore",
         "&rany Item Names and such"));
     menu.addMenuClickHandler(10, (player, slot, stack, action) -> {
-      QuickSell.cfg.setValue("shops." + shop.getID() + ".price." + item.getType().toString(), 1.0D);
+      QuickSell.cfg.setValue("shops." + shop.getId() + ".price." + item.getType().toString(), 1.0D);
       QuickSell.cfg.save();
       quicksell.reload();
-      openShopContentEditor(p, Shop.getShop(shop.getID()), 1);
+      openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
 
       QuickSell.local.sendTranslation(p, "commands.price-set", false,
           new Variable("%item%", item.getType().toString()), new Variable("%shop%", shop.getName()),
@@ -378,11 +378,11 @@ public class ShopEditor implements Listener {
         "&rwhich are NOT renamed and do NOT have Lore"));
     menu.addMenuClickHandler(11, (player, slot, stack, action) -> {
       QuickSell.cfg
-          .setValue("shops." + shop.getID() + ".price." + item.getType().toString() + "-nodata",
+          .setValue("shops." + shop.getId() + ".price." + item.getType().toString() + "-nodata",
               1.0D);
       QuickSell.cfg.save();
       quicksell.reload();
-      openShopContentEditor(p, Shop.getShop(shop.getID()), 1);
+      openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
 
       //noinspection deprecation
       QuickSell.local.sendTranslation(p, "commands.price-set", false,
@@ -405,11 +405,11 @@ public class ShopEditor implements Listener {
       }
 
       QuickSell.cfg.setValue(
-          "shops." + shop.getID() + ".price." + item.getType().toString() + "-" + item.getItemMeta()
+          "shops." + shop.getId() + ".price." + item.getType().toString() + "-" + item.getItemMeta()
               .getDisplayName().replaceAll("&", "&"), 1.0D);
       QuickSell.cfg.save();
       quicksell.reload();
-      openShopContentEditor(player, Shop.getShop(shop.getID()), 1);
+      openShopContentEditor(player, Shop.getShop(shop.getId()), 1);
 
       QuickSell.local.sendTranslation(player, "commands.price-set", false, new Variable("%item%",
               item.getType().toString() + " named " + item.getItemMeta().getDisplayName()),
@@ -421,7 +421,7 @@ public class ShopEditor implements Listener {
 
     menu.addItem(16, new CustomItem(Material.RED_WOOL, "&cCancel"));
     menu.addMenuClickHandler(16, (player, slot, stack, action) -> {
-      openShopContentEditor(player, Shop.getShop(shop.getID()), 1);
+      openShopContentEditor(player, Shop.getShop(shop.getId()), 1);
       return false;
     });
 
@@ -612,7 +612,7 @@ public class ShopEditor implements Listener {
 
     menu.addItem(20, new CustomItem(Material.LIME_WOOL, "&2Save"));
     menu.addMenuClickHandler(20, (p19, arg1, arg2, arg3) -> {
-      QuickSell.cfg.setValue("shops." + shop.getID() + ".price." + string, worth);
+      QuickSell.cfg.setValue("shops." + shop.getId() + ".price." + string, worth);
       QuickSell.cfg.save();
       quicksell.reload();
 
@@ -620,12 +620,12 @@ public class ShopEditor implements Listener {
           .sendTranslation(p19, "commands.price-set", false, new Variable("%item%", string),
               new Variable("%shop%", shop.getName()),
               new Variable("%price%", DoubleHandler.getFancyDouble(worth)));
-      openShopContentEditor(p19, Shop.getShop(shop.getID()), 1);
+      openShopContentEditor(p19, Shop.getShop(shop.getId()), 1);
       return false;
     });
     menu.addItem(24, new CustomItem(Material.RED_WOOL, "&4Cancel"));
     menu.addMenuClickHandler(24, (p110, arg1, arg2, arg3) -> {
-      openShopContentEditor(p110, Shop.getShop(shop.getID()), 1);
+      openShopContentEditor(p110, Shop.getShop(shop.getId()), 1);
       return false;
     });
 
@@ -651,24 +651,24 @@ public class ShopEditor implements Listener {
       }
       final Shop shop = Shop.list().get(i);
 
-      if (!shop.getID().equalsIgnoreCase(theShop.getID())) {
+      if (!shop.getId().equalsIgnoreCase(theShop.getId())) {
         final boolean inherit = QuickSell.cfg
-            .getStringList("shops." + theShop.getID() + ".inheritance")
-            .contains(shop.getID());
+            .getStringList("shops." + theShop.getId() + ".inheritance")
+            .contains(shop.getId());
 
         menu.addItem(i, new CustomItem(shop.getItem(ShopStatus.UNLOCKED), shop.getName(), "",
             "&7Inherit: " + (inherit ? "&2&l✔" : "&4&l✘"), "", "&7&oClick to toggle"));
         menu.addMenuClickHandler(i, (player, slot, item, action) -> {
           List<String> shops = QuickSell.cfg
-              .getStringList("shops." + theShop.getID() + ".inheritance");
+              .getStringList("shops." + theShop.getId() + ".inheritance");
           if (inherit) {
-            shops.remove(shop.getID());
+            shops.remove(shop.getId());
           } else {
-            shops.add(shop.getID());
+            shops.add(shop.getId());
           }
-          QuickSell.cfg.setValue("shops." + theShop.getID() + ".inheritance", shops);
+          QuickSell.cfg.setValue("shops." + theShop.getId() + ".inheritance", shops);
           QuickSell.cfg.save();
-          openShopInheritanceEditor(targetPlayer, Shop.getShop(theShop.getID()));
+          openShopInheritanceEditor(targetPlayer, Shop.getShop(theShop.getId()));
           return false;
         });
       }
