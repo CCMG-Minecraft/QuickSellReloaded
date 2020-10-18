@@ -28,7 +28,7 @@ public class SellProfile {
     uuid = player.getUniqueId();
     transactions = new ArrayList<>();
     cfg = new Config(
-        new File("data-storage/QuickSell/transactions/" + player.getUniqueId() + ".log")
+        new File(QuickSell.getInstance().getDataFolder(), "/transactions/" + player.getUniqueId() + ".log")
     );
     profiles.put(uuid, this);
 

@@ -39,7 +39,7 @@ public class QuickSell extends JavaPlugin {
 
   public static Config cfg;
   public static Economy economy = null;
-  public static Localization local;
+  public static Localization locale;
   public static Map<UUID, Shop> shop;
   public static List<SellEvent> events;
   private static QuickSell instance;
@@ -65,8 +65,8 @@ public class QuickSell extends JavaPlugin {
   public void onEnable() {
     CSCoreLibLoader loader = new CSCoreLibLoader(this);
     if (loader.load()) {
-      if (!new File("data-storage/QuickSell/boosters/").exists()) {
-        if (!new File("data-storage/QuickSell/boosters").mkdirs()) {
+      if (!new File(QuickSell.getInstance().getDataFolder(), "boosters/").exists()) {
+        if (!new File(QuickSell.getInstance().getDataFolder(), "/boosters").mkdirs()) {
           getLogger().warning("Failed to create the boosters data storage directory.");
         }
       }
@@ -82,121 +82,10 @@ public class QuickSell extends JavaPlugin {
       utils.setupMetrics();
       utils.setupLocalization();
 
-      local = utils.getLocalization();
-      local.setDefault("messages.sell", "&a&l+ ${MONEY} &7[ &eSold &o{ITEMS} &eItems&7 ]");
-      local.setDefault("messages.no-access", "&4You do not have access to this Shop");
-      local.setDefault("messages.total", "&2TOTAL: &6+ ${MONEY}");
-      local.setDefault("messages.get-nothing",
-          "&4Sorry, but you will get nothing for these Items :(");
-      local.setDefault("messages.dropped",
-          "&cYou have been given back some of your Items because you could not sell them...");
-      local.setDefault("messages.no-permission",
-          "&cYou do not have the required Permission to do this!");
-      local.setDefault("commands.booster.permission",
-          "&cYou do not have permission to activate a Booster!");
-      local.setDefault("commands.permission", "&cYou do not have permission for this!");
-      local.setDefault("commands.usage", "&4Usage: &c%usage%");
-      local.setDefault("commands.reload.done", "&7All Shops have been reloaded!");
-      local.setDefault("messages.unknown-shop", "&cUnknown Shop!");
-      local.setDefault("messages.no-items", "&cSorry, but you have no Items that can be sold!");
-      local.setDefault("commands.price-set",
-          "&7%item% is now worth &a$%price% &7in the Shop %shop%");
-      local.setDefault("commands.shop-created",
-          "&7You successfully created a new Shop called &b%shop%");
-      local.setDefault("commands.shop-deleted",
-          "&cYou successfully deleted the Shop called &4%shop%");
-      local.setDefault("menu.accept", "&a> Click to sell");
-      local.setDefault("menu.estimate", "&e> Click to estimate");
-      local.setDefault("menu.cancel", "&c> Click to cancel");
-      local.setDefault("menu.title", "&6&l$ Sell your Items $");
-      local.setDefault("messages.estimate", "&eYou will get &6${MONEY} &efor these Items");
-      local.setDefault("commands.sellall.usage", "&4Usage: &c/sellall <Shop>");
-      local.setDefault("commands.disabled", "&cThis command has been disabled");
-      local.setDefault("booster.reset", "&cReset %player%'s multiplier to 1.0x");
-      local.setDefault("boosters.reset", "&cReset all Boosters to 1.0x");
-      local.setDefault("commands.prices.usage", "&4Usage: &c/prices <Shop>");
-      local.setDefault("commands.prices.permission", "&cYou do not have permission for this!");
-      local.setDefault("editor.create-shop", "&a&l! &7Please type in a Name for your Shop in Chat!",
-          "&7&oColor Codes are supported!");
-      local.setDefault("editor.rename-shop", "&a&l! &7Please type in a Name for your Shop in Chat!",
-          "&7&oColor Codes are supported!");
-      local.setDefault("editor.renamed-shop", "&a&l! &7Successfully renamed Shop!");
-      local.setDefault("editor.set-permission-shop",
-          "&a&l! &7Please type in a Permission for your Shop!",
-          "&7&oType \"none\" to specify no Permission");
-      local.setDefault("editor.permission-set-shop",
-          "&a&l! &7Successfully specified a Permission for your Shop!");
+      locale = utils.getLocalization();
+      setDefaultLocaleProperties();
 
-      local.setDefault("messages.booster-use.MONETARY",
-          "&a&l+ ${MONEY} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
-      local.setDefault("messages.booster-use.EXP");
-      local.setDefault("messages.booster-use.MCMMO");
-      local.setDefault("messages.booster-use.PRISONGEMS",
-          "&7+ &a{GEMS} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
-
-      local.setDefault("messages.pbooster-use.MONETARY",
-          "&a&l+ ${MONEY} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
-      local.setDefault("messages.pbooster-use.EXP");
-      local.setDefault("messages.pbooster-use.MCMMO");
-      local.setDefault("messages.pbooster-use.PRISONGEMS",
-          "&7+ &a{GEMS} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
-
-      local.setDefault("booster.extended.MONETARY",
-          "&6%player% &ehas extended the %multiplier%x Booster (Money) for %time% more Minute/s");
-      local.setDefault("booster.extended.EXP",
-          "&6%player% &ehas extended the %multiplier%x Booster (Experience) for %time% more "
-              + "Minute/s");
-      local.setDefault("booster.extended.MCMMO",
-          "&6%player% &ehas extended the %multiplier%x Booster (mcMMO) for %time% more Minute/s");
-      local.setDefault("booster.extended.PRISONGEMS",
-          "&6%player% &ehas extended the %multiplier%x Booster (Gems) for %time% more Minute/s");
-
-      local.setDefault("pbooster.extended.MONETARY",
-          "&eYour %multiplier%x Booster (Money) has been extended for %time% more Minute/s");
-      local.setDefault("pbooster.extended.EXP",
-          "&eYour %multiplier%x Booster (Experience) has been extended for %time% more Minute/s");
-      local.setDefault("pbooster.extended.MCMMO",
-          "&eYour %multiplier%x Booster (mcMMO) has been extended for %time% more Minute/s");
-      local.setDefault("pbooster.extended.PRISONGEMS",
-          "&eYour %multiplier%x Booster (Gems) has been extended for %time% more Minute/s");
-
-      local.setDefault("booster.activate.MONETARY",
-          "&6&l%player% &ehas activated a %multiplier%x Booster (Money) for %time% Minute/s");
-      local.setDefault("booster.activate.EXP",
-          "&6&l%player% &ehas activated a %multiplier%x Booster (Experience) for %time% Minute/s");
-      local.setDefault("booster.activate.MCMMO",
-          "&6&l%player% &ehas activated a %multiplier%x Booster (mcMMO) for %time% Minute/s");
-      local.setDefault("booster.activate.PRISONGEMS",
-          "&6&l%player% &ehas activated a %multiplier%x Booster (Gems) for %time% Minute/s");
-
-      local.setDefault("booster.deactivate.MONETARY",
-          "&4%player%'s &c%multiplier%x Booster (Money) wore off!");
-      local.setDefault("booster.deactivate.EXP",
-          "&4%player%'s &c%multiplier%x Booster (Experience) wore off!");
-      local.setDefault("booster.deactivate.MCMMO",
-          "&4%player%'s &c%multiplier%x Booster (mcMMO) wore off!");
-      local.setDefault("booster.deactivate.PRISONGEMS",
-          "&4%player%'s &c%multiplier%x Booster (Gems) wore off!");
-
-      local.setDefault("pbooster.activate.MONETARY",
-          "&eYou have been given a %multiplier%x Booster (Money) for %time% Minute/s");
-      local.setDefault("pbooster.activate.EXP",
-          "&eYou have been given a %multiplier%x Booster (Experience) for %time% Minute/s");
-      local.setDefault("pbooster.activate.MCMMO",
-          "&eYou have been given a %multiplier%x Booster (mcMMO) for %time% Minute/s");
-      local.setDefault("pbooster.activate.PRISONGEMS",
-          "&eYou have been given a %multiplier%x Booster (Gems) for %time% Minute/s");
-
-      local.setDefault("pbooster.deactivate.MONETARY",
-          "&4Your &c%multiplier%x Booster (Money) wore off!");
-      local.setDefault("pbooster.deactivate.EXP",
-          "&4Your &c%multiplier%x Booster (Experience) wore off!");
-      local.setDefault("pbooster.deactivate.MCMMO",
-          "&4Your &c%multiplier%x Booster (mcMMO) wore off!");
-      local.setDefault("pbooster.deactivate.PRISONGEMS",
-          "&4Your &c%multiplier%x Booster (Gems) wore off!");
-
-      local.save();
+      locale.save();
       cfg = utils.getConfig();
       npcs = new Config("plugins/QuickSell/citizens_npcs.yml");
 
@@ -235,9 +124,11 @@ public class QuickSell extends JavaPlugin {
       }
 
       for (int i = 0; i < 1000; i++) {
-        if (new File("data-storage/QuickSell/boosters/" + i + ".booster").exists()) {
+        if (new File(QuickSell.getInstance().getDataFolder(), "boosters/" + i + ".booster")
+            .exists()) {
           try {
-            if (new Config(new File("data-storage/QuickSell/boosters/" + i + ".booster"))
+            if (new Config(
+                new File(QuickSell.getInstance().getDataFolder(), "boosters/" + i + ".booster"))
                 .getBoolean("private")) {
               new PrivateBooster(i);
             } else {
@@ -257,12 +148,130 @@ public class QuickSell extends JavaPlugin {
     }
   }
 
+  /**
+   * Set the default locale properties.
+   */
+  private void setDefaultLocaleProperties() {
+    locale.setDefault("messages.sell", "&a&l+ ${MONEY} &7[ &eSold &o{ITEMS} &eItems&7 ]");
+    locale.setDefault("messages.no-access", "&4You do not have access to this Shop");
+    locale.setDefault("messages.total", "&2TOTAL: &6+ ${MONEY}");
+    locale.setDefault("messages.get-nothing",
+        "&4Sorry, but you will get nothing for these Items :(");
+    locale.setDefault("messages.dropped",
+        "&cYou have been given back some of your Items because you could not sell them...");
+    locale.setDefault("messages.no-permission",
+        "&cYou do not have the required Permission to do this!");
+    locale.setDefault("commands.booster.permission",
+        "&cYou do not have permission to activate a Booster!");
+    locale.setDefault("commands.permission", "&cYou do not have permission for this!");
+    locale.setDefault("commands.usage", "&4Usage: &c%usage%");
+    locale.setDefault("commands.reload.done", "&7All Shops have been reloaded!");
+    locale.setDefault("messages.unknown-shop", "&cUnknown Shop!");
+    locale.setDefault("messages.no-items", "&cSorry, but you have no Items that can be sold!");
+    locale.setDefault("commands.price-set",
+        "&7%item% is now worth &a$%price% &7in the Shop %shop%");
+    locale.setDefault("commands.shop-created",
+        "&7You successfully created a new Shop called &b%shop%");
+    locale.setDefault("commands.shop-deleted",
+        "&cYou successfully deleted the Shop called &4%shop%");
+    locale.setDefault("menu.accept", "&a> Click to sell");
+    locale.setDefault("menu.estimate", "&e> Click to estimate");
+    locale.setDefault("menu.cancel", "&c> Click to cancel");
+    locale.setDefault("menu.title", "&6&l$ Sell your Items $");
+    locale.setDefault("messages.estimate", "&eYou will get &6${MONEY} &efor these Items");
+    locale.setDefault("commands.sellall.usage", "&4Usage: &c/sellall <Shop>");
+    locale.setDefault("commands.disabled", "&cThis command has been disabled");
+    locale.setDefault("booster.reset", "&cReset %player%'s multiplier to 1.0x");
+    locale.setDefault("boosters.reset", "&cReset all Boosters to 1.0x");
+    locale.setDefault("commands.prices.usage", "&4Usage: &c/prices <Shop>");
+    locale.setDefault("commands.prices.permission", "&cYou do not have permission for this!");
+    locale.setDefault("editor.create-shop", "&a&l! &7Please type in a Name for your Shop in Chat!",
+        "&7&oColor Codes are supported!");
+    locale.setDefault("editor.rename-shop", "&a&l! &7Please type in a Name for your Shop in Chat!",
+        "&7&oColor Codes are supported!");
+    locale.setDefault("editor.renamed-shop", "&a&l! &7Successfully renamed Shop!");
+    locale.setDefault("editor.set-permission-shop",
+        "&a&l! &7Please type in a Permission for your Shop!",
+        "&7&oType \"none\" to specify no Permission");
+    locale.setDefault("editor.permission-set-shop",
+        "&a&l! &7Successfully specified a Permission for your Shop!");
+
+    locale.setDefault("messages.booster-use.MONETARY",
+        "&a&l+ ${MONEY} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
+    locale.setDefault("messages.booster-use.EXP");
+    locale.setDefault("messages.booster-use.MCMMO");
+    locale.setDefault("messages.booster-use.PRISONGEMS",
+        "&7+ &a{GEMS} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
+
+    locale.setDefault("messages.pbooster-use.MONETARY",
+        "&a&l+ ${MONEY} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
+    locale.setDefault("messages.pbooster-use.EXP");
+    locale.setDefault("messages.pbooster-use.MCMMO");
+    locale.setDefault("messages.pbooster-use.PRISONGEMS",
+        "&7+ &a{GEMS} &7(&e%multiplier%x Booster &7&oHover for more Info &7)");
+
+    locale.setDefault("booster.extended.MONETARY",
+        "&6%player% &ehas extended the %multiplier%x Booster (Money) for %time% more Minute/s");
+    locale.setDefault("booster.extended.EXP",
+        "&6%player% &ehas extended the %multiplier%x Booster (Experience) for %time% more "
+            + "Minute/s");
+    locale.setDefault("booster.extended.MCMMO",
+        "&6%player% &ehas extended the %multiplier%x Booster (mcMMO) for %time% more Minute/s");
+    locale.setDefault("booster.extended.PRISONGEMS",
+        "&6%player% &ehas extended the %multiplier%x Booster (Gems) for %time% more Minute/s");
+
+    locale.setDefault("pbooster.extended.MONETARY",
+        "&eYour %multiplier%x Booster (Money) has been extended for %time% more Minute/s");
+    locale.setDefault("pbooster.extended.EXP",
+        "&eYour %multiplier%x Booster (Experience) has been extended for %time% more Minute/s");
+    locale.setDefault("pbooster.extended.MCMMO",
+        "&eYour %multiplier%x Booster (mcMMO) has been extended for %time% more Minute/s");
+    locale.setDefault("pbooster.extended.PRISONGEMS",
+        "&eYour %multiplier%x Booster (Gems) has been extended for %time% more Minute/s");
+
+    locale.setDefault("booster.activate.MONETARY",
+        "&6&l%player% &ehas activated a %multiplier%x Booster (Money) for %time% Minute/s");
+    locale.setDefault("booster.activate.EXP",
+        "&6&l%player% &ehas activated a %multiplier%x Booster (Experience) for %time% Minute/s");
+    locale.setDefault("booster.activate.MCMMO",
+        "&6&l%player% &ehas activated a %multiplier%x Booster (mcMMO) for %time% Minute/s");
+    locale.setDefault("booster.activate.PRISONGEMS",
+        "&6&l%player% &ehas activated a %multiplier%x Booster (Gems) for %time% Minute/s");
+
+    locale.setDefault("booster.deactivate.MONETARY",
+        "&4%player%'s &c%multiplier%x Booster (Money) wore off!");
+    locale.setDefault("booster.deactivate.EXP",
+        "&4%player%'s &c%multiplier%x Booster (Experience) wore off!");
+    locale.setDefault("booster.deactivate.MCMMO",
+        "&4%player%'s &c%multiplier%x Booster (mcMMO) wore off!");
+    locale.setDefault("booster.deactivate.PRISONGEMS",
+        "&4%player%'s &c%multiplier%x Booster (Gems) wore off!");
+
+    locale.setDefault("pbooster.activate.MONETARY",
+        "&eYou have been given a %multiplier%x Booster (Money) for %time% Minute/s");
+    locale.setDefault("pbooster.activate.EXP",
+        "&eYou have been given a %multiplier%x Booster (Experience) for %time% Minute/s");
+    locale.setDefault("pbooster.activate.MCMMO",
+        "&eYou have been given a %multiplier%x Booster (mcMMO) for %time% Minute/s");
+    locale.setDefault("pbooster.activate.PRISONGEMS",
+        "&eYou have been given a %multiplier%x Booster (Gems) for %time% Minute/s");
+
+    locale.setDefault("pbooster.deactivate.MONETARY",
+        "&4Your &c%multiplier%x Booster (Money) wore off!");
+    locale.setDefault("pbooster.deactivate.EXP",
+        "&4Your &c%multiplier%x Booster (Experience) wore off!");
+    locale.setDefault("pbooster.deactivate.MCMMO",
+        "&4Your &c%multiplier%x Booster (mcMMO) wore off!");
+    locale.setDefault("pbooster.deactivate.PRISONGEMS",
+        "&4Your &c%multiplier%x Booster (Gems) wore off!");
+  }
+
   @Override
   public void onDisable() {
     cfg = null;
     shop = null;
     economy = null;
-    local = null;
+    locale = null;
     events = null;
 
     for (SellProfile profile : SellProfile.profiles.values()) {
@@ -312,7 +321,7 @@ public class QuickSell extends JavaPlugin {
               if (shop.hasUnlocked((Player) sender)) {
                 ShopMenu.open((Player) sender, shop);
               } else {
-                QuickSell.local.sendTranslation(sender, "messages.no-access", false);
+                QuickSell.locale.sendTranslation(sender, "messages.no-access", false);
               }
             } else {
               ShopMenu.openMenu((Player) sender);
@@ -322,7 +331,7 @@ public class QuickSell extends JavaPlugin {
               ShopMenu.open((Player) sender,
                   Objects.requireNonNull(Shop.getHighestShop((Player) sender)));
             } else {
-              QuickSell.local.sendTranslation(sender, "messages.no-access", false);
+              QuickSell.locale.sendTranslation(sender, "messages.no-access", false);
             }
           } else {
             ShopMenu.openMenu((Player) sender);
@@ -332,7 +341,7 @@ public class QuickSell extends JavaPlugin {
               ChatColor.translateAlternateColorCodes('&', "This Command is only for Players"));
         }
       } else {
-        local.sendTranslation(sender, "commands.disabled", false);
+        locale.sendTranslation(sender, "commands.disabled", false);
       }
     } else if (cmd.getName().equalsIgnoreCase("sellall")) {
       if (cfg.getBoolean("options.enable-commands")) {
@@ -343,27 +352,27 @@ public class QuickSell extends JavaPlugin {
               if (shop.hasUnlocked((Player) sender)) {
                 shop.sellAll((Player) sender, Type.SELLALL);
               } else {
-                QuickSell.local.sendTranslation(sender, "messages.no-access", false);
+                QuickSell.locale.sendTranslation(sender, "messages.no-access", false);
               }
             } else {
-              local.sendTranslation(sender, "messages.unknown-shop", false);
+              locale.sendTranslation(sender, "messages.unknown-shop", false);
             }
           } else if (cfg.getBoolean("options.open-only-shop-with-permission")) {
             if (Shop.getHighestShop((Player) sender) != null) {
               Objects.requireNonNull(Shop.getHighestShop((Player) sender))
                   .sellAll((Player) sender, Type.SELLALL);
             } else {
-              QuickSell.local.sendTranslation(sender, "messages.no-access", false);
+              QuickSell.locale.sendTranslation(sender, "messages.no-access", false);
             }
           } else {
-            local.sendTranslation(sender, "commands.sellall.usage", false);
+            locale.sendTranslation(sender, "commands.sellall.usage", false);
           }
         } else {
           sender.sendMessage(
               ChatColor.translateAlternateColorCodes('&', "This Command is only for Players"));
         }
       } else {
-        local.sendTranslation(sender, "commands.disabled", false);
+        locale.sendTranslation(sender, "commands.disabled", false);
       }
     } else if (cmd.getName().equalsIgnoreCase("prices")) {
       if (sender instanceof Player) {
@@ -374,23 +383,23 @@ public class QuickSell extends JavaPlugin {
               if (shop.hasUnlocked((Player) sender)) {
                 shop.showPrices((Player) sender);
               } else {
-                QuickSell.local.sendTranslation(sender, "messages.no-access", false);
+                QuickSell.locale.sendTranslation(sender, "messages.no-access", false);
               }
             } else {
-              local.sendTranslation(sender, "messages.unknown-shop", false);
+              locale.sendTranslation(sender, "messages.unknown-shop", false);
             }
           } else if (cfg.getBoolean("options.open-only-shop-with-permission")) {
             if (Shop.getHighestShop((Player) sender) != null) {
               Objects.requireNonNull(Shop.getHighestShop((Player) sender))
                   .showPrices((Player) sender);
             } else {
-              QuickSell.local.sendTranslation(sender, "messages.no-access", false);
+              QuickSell.locale.sendTranslation(sender, "messages.no-access", false);
             }
           } else {
-            local.sendTranslation(sender, "commands.prices.usage", false);
+            locale.sendTranslation(sender, "commands.prices.usage", false);
           }
         } else {
-          local.sendTranslation(sender, "commands.prices.permission", false);
+          locale.sendTranslation(sender, "commands.prices.permission", false);
         }
       } else {
         sender.sendMessage(
@@ -420,7 +429,7 @@ public class QuickSell extends JavaPlugin {
                     + "Player> <Multiplier> <Duration in Minutes>"));
           }
         } else {
-          local.sendTranslation(sender, "commands.booster.permission", false);
+          locale.sendTranslation(sender, "commands.booster.permission", false);
         }
       } else {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
@@ -453,7 +462,7 @@ public class QuickSell extends JavaPlugin {
                     + "Player> <Multiplier> <Duration in Minutes>"));
           }
         } else {
-          local.sendTranslation(sender, "commands.booster.permission", false);
+          locale.sendTranslation(sender, "commands.booster.permission", false);
         }
       } else {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
@@ -472,7 +481,7 @@ public class QuickSell extends JavaPlugin {
         if (args.length >= 1) {
           if (args[0].equalsIgnoreCase("reload")) {
             reload();
-            local.sendTranslation(sender, "commands.reload.done", false);
+            locale.sendTranslation(sender, "commands.reload.done", false);
           } else if (args[0].equalsIgnoreCase("editor")) {
             if (sender instanceof Player) {
               editor.openEditor((Player) sender);
@@ -493,18 +502,18 @@ public class QuickSell extends JavaPlugin {
                       Double.valueOf(args[3]));
                   cfg.save();
                   reload();
-                  local.sendTranslation(sender, "commands.price-set", false,
+                  locale.sendTranslation(sender, "commands.price-set", false,
                       new Variable("%item%", args[2]), new Variable("%shop%", args[1]),
                       new Variable("%price%", args[3]));
                 } else {
-                  local.sendTranslation(sender, "commands.usage", false,
+                  locale.sendTranslation(sender, "commands.usage", false,
                       new Variable("%usage%", "/quicksell edit <ShopName> <Item> <Price>"));
                 }
               } else {
-                local.sendTranslation(sender, "messages.unknown-shop", false);
+                locale.sendTranslation(sender, "messages.unknown-shop", false);
               }
             } else {
-              local.sendTranslation(sender, "commands.usage", false,
+              locale.sendTranslation(sender, "commands.usage", false,
                   new Variable("%usage%", "/quicksell edit <ShopName> <Item> <Price>"));
             }
           } else if (args[0].equalsIgnoreCase("create")) {
@@ -519,17 +528,17 @@ public class QuickSell extends JavaPlugin {
               cfg.setValue("list", list);
               cfg.save();
               reload();
-              local.sendTranslation(sender, "commands.shop-created", false,
+              locale.sendTranslation(sender, "commands.shop-created", false,
                   new Variable("%shop%", args[1]));
             } else {
-              local.sendTranslation(sender, "commands.usage", false,
+              locale.sendTranslation(sender, "commands.usage", false,
                   new Variable("%usage%", "/quicksell create <ShopName>"));
             }
           } else if (args[0].equalsIgnoreCase("delete")) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                 "&4DEPRECATED! Use &c/quicksell editor &4instead!"));
             if (Shop.getShop(args[1]) == null) {
-              local.sendTranslation(sender, "messages.unknown-shop", false);
+              locale.sendTranslation(sender, "messages.unknown-shop", false);
             } else if (args.length == 2) {
               List<String> list = new ArrayList<>();
               for (Shop shop : Shop.list()) {
@@ -539,10 +548,10 @@ public class QuickSell extends JavaPlugin {
               cfg.setValue("list", list);
               cfg.save();
               reload();
-              local.sendTranslation(sender, "commands.shop-deleted", false,
+              locale.sendTranslation(sender, "commands.shop-deleted", false,
                   new Variable("%shop%", args[1]));
             } else {
-              local.sendTranslation(sender, "commands.usage", false,
+              locale.sendTranslation(sender, "commands.usage", false,
                   new Variable("%usage%", "/quicksell delete <ShopName>"));
             }
           } else if (args[0].equalsIgnoreCase("linknpc")) {
@@ -558,7 +567,7 @@ public class QuickSell extends JavaPlugin {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     "&cYou must select an NPC before linking it!"));
               } else if (Shop.getShop(args[1]) == null) {
-                local.sendTranslation(sender, "messages.unknown-shop", false);
+                locale.sendTranslation(sender, "messages.unknown-shop", false);
               } else if (!args[2].equalsIgnoreCase("sell") && !args[2]
                   .equalsIgnoreCase("sellall")) {
                 npcs.setValue(String.valueOf(npc.getId()), args[1] + " ; " + args[2].toUpperCase());
@@ -568,7 +577,7 @@ public class QuickSell extends JavaPlugin {
                         + "&7Shop for the Shop &r" + args[1] + "&7"));
               }
             } else {
-              local.sendTranslation(sender, "commands.usage", false,
+              locale.sendTranslation(sender, "commands.usage", false,
                   new Variable("%usage%", "/quicksell linknpc <ShopName> <sell/sellall>"));
             }
           } else if (args[0].equalsIgnoreCase("unlinknpc")) {
@@ -601,7 +610,7 @@ public class QuickSell extends JavaPlugin {
                   booster.deactivate();
                 }
               }
-              local.sendTranslation(sender, "booster.reset", false,
+              locale.sendTranslation(sender, "booster.reset", false,
                   new Variable("%player%", args[1]));
             } else if (args.length == 1) {
               Iterator<Booster> boosters = Booster.iterate();
@@ -610,9 +619,9 @@ public class QuickSell extends JavaPlugin {
                 boosters.remove();
                 booster.deactivate();
               }
-              local.sendTranslation(sender, "boosters.reset", false);
+              locale.sendTranslation(sender, "boosters.reset", false);
             } else {
-              local.sendTranslation(sender, "commands.usage", false,
+              locale.sendTranslation(sender, "commands.usage", false,
                   new Variable("%usage%", "/quicksell stopboosters <Player>"));
             }
           } else {
@@ -622,7 +631,7 @@ public class QuickSell extends JavaPlugin {
           sendHelpMessager(sender);
         }
       } else {
-        local.sendTranslation(sender, "commands.permission", false);
+        locale.sendTranslation(sender, "commands.permission", false);
       }
     }
     return true;

@@ -27,14 +27,14 @@ public class CitizensListener implements Listener {
       String action = QuickSell.getInstance().npcs.getString(String.valueOf(npc.getId()));
       Shop shop = Shop.getShop(action.split(" ; ")[0]);
       if (shop == null) {
-        QuickSell.local.sendTranslation(e.getClicker(), "messages.unknown-shop", false);
+        QuickSell.locale.sendTranslation(e.getClicker(), "messages.unknown-shop", false);
       } else {
         if (action.split(" ; ")[1].equalsIgnoreCase("SELL")) {
           ShopMenu.open(e.getClicker(), shop);
         } else if (shop.hasUnlocked(e.getClicker())) {
           shop.sellAll(e.getClicker(), Type.CITIZENS);
         } else {
-          QuickSell.local.sendTranslation(e.getClicker(), "messages.no-access", false);
+          QuickSell.locale.sendTranslation(e.getClicker(), "messages.no-access", false);
         }
       }
     }
@@ -55,7 +55,7 @@ public class CitizensListener implements Listener {
       String action = QuickSell.getInstance().npcs.getString(String.valueOf(npc.getId()));
       Shop shop = Shop.getShop(action.split(" ; ")[0]);
       if (shop == null) {
-        QuickSell.local.sendTranslation(p, "messages.unknown-shop", false);
+        QuickSell.locale.sendTranslation(p, "messages.unknown-shop", false);
       } else {
         shop.showPrices(p);
       }

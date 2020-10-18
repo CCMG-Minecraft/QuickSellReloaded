@@ -2,8 +2,6 @@ package me.mrCookieSlime.quicksell;
 
 import java.util.Objects;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu.MenuClickHandler;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,13 +26,13 @@ public class ShopMenu {
       Inventory inv = Bukkit
           .createInventory(null, 9 * QuickSell.cfg.getInt("options.sell-gui-rows"), ChatColor
               .translateAlternateColorCodes('&',
-                  QuickSell.local.getTranslation("menu.title").get(0)));
+                  QuickSell.locale.getTranslation("menu.title").get(0)));
       if (QuickSell.cfg.getBoolean("options.enable-menu-line")) {
         inv.setItem(9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 9,
             new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
         inv.setItem(9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 8,
             new CustomItem(Material.LIME_STAINED_GLASS_PANE,
-                QuickSell.local.getTranslation("menu.accept").get(0)));
+                QuickSell.locale.getTranslation("menu.accept").get(0)));
         inv.setItem(9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 7,
             new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
 
@@ -42,7 +40,7 @@ public class ShopMenu {
             new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
         inv.setItem(9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 5,
             new CustomItem(Material.YELLOW_STAINED_GLASS_PANE,
-                QuickSell.local.getTranslation("menu.estimate").get(0)));
+                QuickSell.locale.getTranslation("menu.estimate").get(0)));
         inv.setItem(9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 4,
             new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
 
@@ -50,14 +48,14 @@ public class ShopMenu {
             new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
         inv.setItem(9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 2,
             new CustomItem(Material.RED_STAINED_GLASS_PANE,
-                QuickSell.local.getTranslation("menu.cancel").get(0)));
+                QuickSell.locale.getTranslation("menu.cancel").get(0)));
         inv.setItem(9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 1,
             new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
       }
       p.openInventory(inv);
       QuickSell.shop.put(p.getUniqueId(), shop);
     } else {
-      QuickSell.local.sendTranslation(p, "messages.no-access", false);
+      QuickSell.locale.sendTranslation(p, "messages.no-access", false);
     }
   }
 
@@ -71,10 +69,10 @@ public class ShopMenu {
       if (Shop.getHighestShop(p) != null) {
         open(p, Objects.requireNonNull(Shop.getHighestShop(p)));
       } else {
-        QuickSell.local.sendTranslation(p, "messages.no-access", false);
+        QuickSell.locale.sendTranslation(p, "messages.no-access", false);
       }
     } else {
-      ChestMenu menu = new ChestMenu(QuickSell.local.getTranslation("menu.title").get(0));
+      ChestMenu menu = new ChestMenu(QuickSell.locale.getTranslation("menu.title").get(0));
 
       for (int i = 0; i < Shop.list().size(); i++) {
         if (Shop.list().get(i) != null) {

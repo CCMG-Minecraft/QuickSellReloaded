@@ -61,7 +61,7 @@ public class Shop {
 
     lore = new ArrayList<>();
     lore.add(ChatColor.translateAlternateColorCodes('&',
-        QuickSell.local.getTranslation("messages.no-access").get(0)));
+        QuickSell.locale.getTranslation("messages.no-access").get(0)));
     for (String line : QuickSell.cfg.getStringList("shops." + shop + ".lore")) {
       lore.add(ChatColor.translateAlternateColorCodes('&', line));
     }
@@ -167,7 +167,7 @@ public class Shop {
   public void sell(Player player, boolean silent, Type type, ItemStack... soldItems) {
     if (soldItems.length == 0) {
       if (!silent) {
-        QuickSell.local.sendTranslation(player, "messages.no-items", false);
+        QuickSell.locale.sendTranslation(player, "messages.no-items", false);
       }
     } else {
       double money = 0.0;
@@ -212,10 +212,10 @@ public class Shop {
           event.onSell(player, type, total, totalmoney);
         }
       } else if (!silent && total > 0) {
-        QuickSell.local.sendTranslation(player, "messages.get-nothing", false);
+        QuickSell.locale.sendTranslation(player, "messages.get-nothing", false);
       }
       if (!silent && sold < total && total > 0) {
-        QuickSell.local.sendTranslation(player, "messages.dropped", false);
+        QuickSell.locale.sendTranslation(player, "messages.dropped", false);
       }
     }
     PlayerInventory.update(player);
@@ -233,7 +233,7 @@ public class Shop {
   public double handoutReward(Player player, double totalMoney, int items, boolean silent) {
     double money = totalMoney;
     if (!silent) {
-      QuickSell.local.sendTranslation(player, "messages.sell", false,
+      QuickSell.locale.sendTranslation(player, "messages.sell", false,
           new Variable("{MONEY}", DoubleHandler.getFancyDouble(money)),
           new Variable("{ITEMS}", String.valueOf(items)));
     }
@@ -247,7 +247,7 @@ public class Shop {
       }
     }
     if (!silent && !Booster.getBoosters(player.getName()).isEmpty()) {
-      QuickSell.local.sendTranslation(player, "messages.total", false,
+      QuickSell.locale.sendTranslation(player, "messages.total", false,
           new Variable("{MONEY}", DoubleHandler.getFancyDouble(money)));
     }
     money = DoubleHandler.fixDouble(money, 2);

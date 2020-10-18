@@ -44,7 +44,7 @@ public class SellListener implements Listener {
         e.setLine(0, prefix);
       } else {
         e.setCancelled(true);
-        QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-permission", false);
+        QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-permission", false);
       }
     }
     prefix = ChatColor
@@ -54,7 +54,7 @@ public class SellListener implements Listener {
         e.setLine(0, prefix);
       } else {
         e.setCancelled(true);
-        QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-permission", false);
+        QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-permission", false);
       }
     }
   }
@@ -91,7 +91,7 @@ public class SellListener implements Listener {
               }
               shop.sellAll(e.getPlayer(), Type.SELLALL);
             } else {
-              QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-access", false);
+              QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }
           } else if (QuickSell.cfg.getBoolean("options.open-only-shop-with-permission")) {
             if (Shop.getHighestShop(e.getPlayer()) != null) {
@@ -103,10 +103,10 @@ public class SellListener implements Listener {
               Objects.requireNonNull(Shop.getHighestShop(e.getPlayer()))
                   .sellAll(e.getPlayer(), Type.SELLALL);
             } else {
-              QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-access", false);
+              QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }
           } else {
-            QuickSell.local.sendTranslation(e.getPlayer(), "messages.unknown-shop", false);
+            QuickSell.locale.sendTranslation(e.getPlayer(), "messages.unknown-shop", false);
           }
           e.setCancelled(true);
         }
@@ -125,7 +125,7 @@ public class SellListener implements Listener {
             if (Shop.getHighestShop(e.getPlayer()) != null) {
               Objects.requireNonNull(Shop.getHighestShop(e.getPlayer())).showPrices(e.getPlayer());
             } else {
-              QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-access", false);
+              QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }
           }
         } else if (sign.getLine(0).equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&',
@@ -135,16 +135,16 @@ public class SellListener implements Listener {
             if (shop.hasUnlocked(e.getPlayer())) {
               shop.showPrices(e.getPlayer());
             } else {
-              QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-access", false);
+              QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }
           } else if (QuickSell.cfg.getBoolean("options.open-only-shop-with-permission")) {
             if (Shop.getHighestShop(e.getPlayer()) != null) {
               Objects.requireNonNull(Shop.getHighestShop(e.getPlayer())).showPrices(e.getPlayer());
             } else {
-              QuickSell.local.sendTranslation(e.getPlayer(), "messages.no-access", false);
+              QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }
           } else {
-            QuickSell.local.sendTranslation(e.getPlayer(), "messages.unknown-shop", false);
+            QuickSell.locale.sendTranslation(e.getPlayer(), "messages.unknown-shop", false);
           }
           e.setCancelled(true);
         }
@@ -219,7 +219,7 @@ public class SellListener implements Listener {
               money = money + money * (booster.getBoosterMultiplier() - 1);
             }
           }
-          QuickSell.local.sendTranslation(p, "messages.estimate", false,
+          QuickSell.locale.sendTranslation(p, "messages.estimate", false,
               new Variable("{MONEY}", String.valueOf(DoubleHandler.fixDouble(money, 2))));
         }
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 4) {

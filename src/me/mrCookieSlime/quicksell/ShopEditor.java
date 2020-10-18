@@ -72,7 +72,7 @@ public class ShopEditor implements Listener {
               e.getMessage());
           QuickSell.cfg.save();
 
-          QuickSell.local.sendTranslation(e.getPlayer(), "commands.shop-created", false,
+          QuickSell.locale.sendTranslation(e.getPlayer(), "commands.shop-created", false,
               new Variable("%shop%", e.getMessage()));
 
           openEditor(e.getPlayer());
@@ -88,7 +88,7 @@ public class ShopEditor implements Listener {
           quicksell.reload();
 
           openShopEditor(e.getPlayer(), Shop.getShop(shop.getId()));
-          QuickSell.local.sendTranslation(e.getPlayer(), "editor.renamed-shop", false);
+          QuickSell.locale.sendTranslation(e.getPlayer(), "editor.renamed-shop", false);
 
           this.input.remove(e.getPlayer().getUniqueId());
           break;
@@ -102,7 +102,7 @@ public class ShopEditor implements Listener {
           quicksell.reload();
 
           openShopEditor(e.getPlayer(), Shop.getShop(shop.getId()));
-          QuickSell.local.sendTranslation(e.getPlayer(), "editor.permission-set-shop", false);
+          QuickSell.locale.sendTranslation(e.getPlayer(), "editor.permission-set-shop", false);
 
           this.input.remove(e.getPlayer().getUniqueId());
           break;
@@ -132,7 +132,7 @@ public class ShopEditor implements Listener {
             "&rLeft Click: &7Create a new Shop"));
         menu.addMenuClickHandler(i, (p12, slot, item, action) -> {
           input.put(p12.getUniqueId(), new Input(InputType.NEW_SHOP, slot));
-          QuickSell.local.sendTranslation(p12, "editor.create-shop", false);
+          QuickSell.locale.sendTranslation(p12, "editor.create-shop", false);
           p12.closeInventory();
           return false;
         });
@@ -184,7 +184,7 @@ public class ShopEditor implements Listener {
         new CustomItem(Material.NAME_TAG, shop.getName(), "", "&rClick: &7Change Name"));
     menu.addMenuClickHandler(0, (p12, slot, item, action) -> {
       input.put(p12.getUniqueId(), new Input(InputType.RENAME, shop));
-      QuickSell.local.sendTranslation(p12, "editor.rename-shop", false);
+      QuickSell.locale.sendTranslation(p12, "editor.rename-shop", false);
       p12.closeInventory();
       return false;
     });
@@ -212,7 +212,7 @@ public class ShopEditor implements Listener {
         "", "&rClick: &7Change Permission Node"));
     menu.addMenuClickHandler(2, (p14, slot, item, action) -> {
       input.put(p14.getUniqueId(), new Input(InputType.SET_PERMISSION, shop));
-      QuickSell.local.sendTranslation(p14, "editor.set-permission-shop", false);
+      QuickSell.locale.sendTranslation(p14, "editor.set-permission-shop", false);
       p14.closeInventory();
       return false;
     });
@@ -364,7 +364,7 @@ public class ShopEditor implements Listener {
       quicksell.reload();
       openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
 
-      QuickSell.local.sendTranslation(p, "commands.price-set", false,
+      QuickSell.locale.sendTranslation(p, "commands.price-set", false,
           new Variable("%item%", item.getType().toString()), new Variable("%shop%", shop.getName()),
           new Variable("%price%", "1.0"));
       p.sendMessage(
@@ -385,7 +385,7 @@ public class ShopEditor implements Listener {
       openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
 
       //noinspection deprecation
-      QuickSell.local.sendTranslation(p, "commands.price-set", false,
+      QuickSell.locale.sendTranslation(p, "commands.price-set", false,
           new Variable("%item%", item.getType().toString() + ":" + Objects
               .requireNonNull(item.getData()).getData()),
           new Variable("%shop%", shop.getName()), new Variable("%price%", "1.0"));
@@ -411,7 +411,7 @@ public class ShopEditor implements Listener {
       quicksell.reload();
       openShopContentEditor(player, Shop.getShop(shop.getId()), 1);
 
-      QuickSell.local.sendTranslation(player, "commands.price-set", false, new Variable("%item%",
+      QuickSell.locale.sendTranslation(player, "commands.price-set", false, new Variable("%item%",
               item.getType().toString() + " named " + item.getItemMeta().getDisplayName()),
           new Variable("%shop%", shop.getName()), new Variable("%price%", "1.0"));
       player.sendMessage(
@@ -616,7 +616,7 @@ public class ShopEditor implements Listener {
       QuickSell.cfg.save();
       quicksell.reload();
 
-      QuickSell.local
+      QuickSell.locale
           .sendTranslation(p19, "commands.price-set", false, new Variable("%item%", string),
               new Variable("%shop%", shop.getName()),
               new Variable("%price%", DoubleHandler.getFancyDouble(worth)));

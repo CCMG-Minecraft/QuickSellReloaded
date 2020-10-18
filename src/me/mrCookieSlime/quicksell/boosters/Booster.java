@@ -66,7 +66,7 @@ public class Booster {
   public Booster(int id) throws ParseException {
     active.add(this);
     this.id = id;
-    this.cfg = new Config(new File("data-storage/QuickSell/boosters/" + id + ".booster"));
+    this.cfg = new Config(new File(QuickSell.getInstance().getDataFolder(), "boosters/" + id + ".booster"));
     if (cfg.contains("type")) {
       this.type = BoosterType.valueOf(cfg.getString("type"));
     } else {
@@ -220,12 +220,12 @@ public class Booster {
             booster.extend(this);
             if (!silent) {
               if (this instanceof PrivateBooster && Bukkit.getPlayer(getOwner()) != null) {
-                QuickSell.local.sendTranslation(Bukkit.getPlayer(getOwner()),
+                QuickSell.locale.sendTranslation(Bukkit.getPlayer(getOwner()),
                     "pbooster.extended." + type.toString(), false,
                     new Variable("%time%", String.valueOf(this.getDuration())),
                     new Variable("%multiplier%", String.valueOf(this.getBoosterMultiplier())));
               } else {
-                for (String message : QuickSell.local
+                for (String message : QuickSell.locale
                     .getTranslation("booster.extended." + type.toString())) {
                   Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
                       message.replace("%player%", this.getOwner())
@@ -242,12 +242,12 @@ public class Booster {
 
     if (!infinite) {
       for (int i = 0; i < 1000; i++) {
-        if (!new File("data-storage/QuickSell/boosters/" + i + ".booster").exists()) {
+        if (!new File(QuickSell.getInstance().getDataFolder(), "boosters/" + i + ".booster").exists()) {
           this.id = i;
           break;
         }
       }
-      this.cfg = new Config(new File("data-storage/QuickSell/boosters/" + id + ".booster"));
+      this.cfg = new Config(new File(QuickSell.getInstance().getDataFolder(), "boosters/" + id + ".booster"));
       cfg.setValue("type", type.toString());
       cfg.setValue("owner", getOwner());
       cfg.setValue("multiplier", multiplier);
@@ -261,12 +261,12 @@ public class Booster {
     active.add(this);
     if (!silent) {
       if (this instanceof PrivateBooster && Bukkit.getPlayer(getOwner()) != null) {
-        QuickSell.local
+        QuickSell.locale
             .sendTranslation(Bukkit.getPlayer(getOwner()), "pbooster.activate." + type.toString(),
                 false, new Variable("%time%", String.valueOf(this.getDuration())),
                 new Variable("%multiplier%", String.valueOf(this.getBoosterMultiplier())));
       } else {
-        for (String message : QuickSell.local
+        for (String message : QuickSell.locale
             .getTranslation("booster.activate." + type.toString())) {
           Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
               message.replace("%player%", this.getOwner())
@@ -300,13 +300,13 @@ public class Booster {
     if (!silent) {
       if (this instanceof PrivateBooster) {
         if (Bukkit.getPlayer(getOwner()) != null) {
-          QuickSell.local.sendTranslation(Bukkit.getPlayer(getOwner()),
+          QuickSell.locale.sendTranslation(Bukkit.getPlayer(getOwner()),
               "pbooster.deactivate." + type.toString(), false,
               new Variable("%time%", String.valueOf(this.getDuration())),
               new Variable("%multiplier%", String.valueOf(this.getBoosterMultiplier())));
         }
       } else {
-        for (String message : QuickSell.local
+        for (String message : QuickSell.locale
             .getTranslation("booster.deactivate." + type.toString())) {
           Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
               message.replace("%player%", this.getOwner())
@@ -317,7 +317,7 @@ public class Booster {
     }
     if (!infinite) {
       //noinspection ResultOfMethodCallIgnored
-      new File("data-storage/QuickSell/boosters/" + getId() + ".booster").delete();
+      new File(QuickSell.getInstance().getDataFolder(), "boosters/" + getId() + ".booster").delete();
     }
     active.remove(this);
   }
@@ -418,7 +418,7 @@ public class Booster {
    * @param variables Any variables in the message
    */
   public void sendMessage(Player player, Variable... variables) {
-    List<String> messages = QuickSell.local.getTranslation(getMessage());
+    List<String> messages = QuickSell.locale.getTranslation(getMessage());
     if (messages.isEmpty()) {
       return;
     }
