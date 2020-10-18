@@ -8,7 +8,7 @@ import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Syntax;
 import me.mrCookieSlime.CSCoreLibPlugin.general.String.StringUtils;
 import me.mrCookieSlime.QuickSell.QuickSell;
-import me.mrCookieSlime.QuickSell.Shop;
+import me.mrCookieSlime.QuickSell.shop.Shop;
 import me.mrCookieSlime.QuickSell.commands.QSBaseCommand;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -27,7 +27,7 @@ public class NpcLinkCommands extends QSBaseCommand {
   @Subcommand("linknpc")
   @Description("Link a Citizens NPC to a Shop")
   @CommandPermission("quicksell.linknpc|quicksell.admin")
-  @CommandCompletion("@nothing sell|sellall")
+  @CommandCompletion("@allshops sell|sellall")
   @Syntax("<shop> <mode>")
   public void commandLinkNpc(Player player, String shop, String mode) {
     QuickSell instance = QuickSell.getInstance();

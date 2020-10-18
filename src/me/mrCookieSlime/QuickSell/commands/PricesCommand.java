@@ -1,11 +1,12 @@
 package me.mrCookieSlime.QuickSell.commands;
 
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import java.util.Objects;
 import me.mrCookieSlime.QuickSell.QuickSell;
-import me.mrCookieSlime.QuickSell.Shop;
+import me.mrCookieSlime.QuickSell.shop.Shop;
 import org.bukkit.entity.Player;
 
 @CommandAlias("prices")
@@ -37,6 +38,7 @@ public class PricesCommand extends QSBaseCommand {
    * @param shopId The Shop ID
    */
   @CommandPermission("quicksell.prices")
+  @CommandCompletion("@availableshops")
   @Default
   public void commandSellAll(Player sender, String shopId) {
     Shop shop = Shop.getShop(shopId);
