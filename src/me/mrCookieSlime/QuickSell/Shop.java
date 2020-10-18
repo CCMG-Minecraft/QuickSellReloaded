@@ -223,8 +223,8 @@ public class Shop {
     double money = totalMoney;
     if (!silent) {
       QuickSell.locale.sendTranslation(player, "messages.sell", false,
-          new Variable("{MONEY}", DoubleHandler.getFancyDouble(money)),
-          new Variable("{ITEMS}", String.valueOf(items)));
+          "{MONEY}", DoubleHandler.getFancyDouble(money),
+          "{ITEMS}", String.valueOf(items));
     }
     for (Booster booster : Booster.getBoosters(player.getName())) {
       if (booster.getType().equals(BoosterType.MONETARY)) {
@@ -236,8 +236,12 @@ public class Shop {
       }
     }
     if (!silent && !Booster.getBoosters(player.getName()).isEmpty()) {
-      QuickSell.locale.sendTranslation(player, "messages.total", false,
-          new Variable("{MONEY}", DoubleHandler.getFancyDouble(money)));
+      QuickSell.locale.sendTranslation(
+          player,
+          "messages.total",
+          false,
+          "{MONEY}", DoubleHandler.getFancyDouble(money)
+      );
     }
     money = DoubleHandler.fixDouble(money, 2);
     QuickSell.economy.depositPlayer(player, money);

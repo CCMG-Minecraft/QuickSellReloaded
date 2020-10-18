@@ -3,7 +3,6 @@ package me.mrCookieSlime.QuickSell;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Variable;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.InvUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
 import me.mrCookieSlime.QuickSell.SellEvent.Type;
@@ -84,22 +83,12 @@ public class SellListener implements Listener {
           Shop shop = Shop.getShop(sign.getLine(1));
           if (shop != null) {
             if (shop.hasUnlocked(e.getPlayer())) {
-              String item = sign.getLine(2);
-              item = item.toUpperCase();
-              if (item.contains(" ")) {
-                item = item.replace(" ", "_");
-              }
               shop.sellAll(e.getPlayer(), Type.SELLALL);
             } else {
               QuickSell.locale.sendTranslation(e.getPlayer(), "messages.no-access", false);
             }
           } else if (QuickSell.cfg.getBoolean("options.open-only-shop-with-permission")) {
             if (Shop.getHighestShop(e.getPlayer()) != null) {
-              String item = sign.getLine(2);
-              item = item.toUpperCase();
-              if (item.contains(" ")) {
-                item = item.replace(" ", "_");
-              }
               Objects.requireNonNull(Shop.getHighestShop(e.getPlayer()))
                   .sellAll(e.getPlayer(), Type.SELLALL);
             } else {
@@ -184,16 +173,16 @@ public class SellListener implements Listener {
   public void onClick(InventoryClickEvent e) {
     if (QuickSell.cfg.getBoolean("options.enable-menu-line") && e.getRawSlot() < e.getInventory()
         .getSize()) {
-      Player p = (Player) e.getWhoClicked();
-      if (QuickSell.shop.containsKey(p.getUniqueId())) {
-        Shop shop = QuickSell.shop.get(p.getUniqueId());
+      Player player = (Player) e.getWhoClicked();
+      if (QuickSell.shop.containsKey(player.getUniqueId())) {
+        Shop shop = QuickSell.shop.get(player.getUniqueId());
 
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 9) {
           e.setCancelled(true);
         }
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 8) {
           e.setCancelled(true);
-          p.closeInventory();
+          player.closeInventory();
         }
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 7) {
           e.setCancelled(true);
@@ -207,20 +196,22 @@ public class SellListener implements Listener {
           double money = 0.0;
           for (int i = 0; i < e.getInventory().getSize() - 9; i++) {
             ItemStack item = e.getInventory().getContents()[i];
-            if (item != null) {
-              money = money + shop.getPrices().getPrice(item);
-            }
+            money = money + shop.getPrices().getPrice(item);
           }
 
           money = DoubleHandler.fixDouble(money, 2);
 
           if (money > 0.0) {
-            for (Booster booster : Booster.getBoosters(p.getName(), BoosterType.MONETARY)) {
+            for (Booster booster : Booster.getBoosters(player.getName(), BoosterType.MONETARY)) {
               money = money + money * (booster.getBoosterMultiplier() - 1);
             }
           }
-          QuickSell.locale.sendTranslation(p, "messages.estimate", false,
-              new Variable("{MONEY}", String.valueOf(DoubleHandler.fixDouble(money, 2))));
+          QuickSell.locale.sendTranslation(
+              player,
+              "messages.estimate",
+              false,
+              "{MONEY}", String.valueOf(DoubleHandler.fixDouble(money, 2))
+          );
         }
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 4) {
           e.setCancelled(true);
@@ -231,20 +222,18 @@ public class SellListener implements Listener {
         }
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 2) {
           e.setCancelled(true);
-          QuickSell.shop.remove(p.getUniqueId());
+          QuickSell.shop.remove(player.getUniqueId());
           for (int i = 0; i < e.getInventory().getSize() - 9; i++) {
             ItemStack item = e.getInventory().getContents()[i];
-            if (item != null) {
-              if (item.getType() != Material.AIR) {
-                if (InvUtils.fits(p.getInventory(), item)) {
-                  p.getInventory().addItem(item);
-                } else {
-                  p.getWorld().dropItemNaturally(p.getLocation(), item);
-                }
+            if (item.getType() != Material.AIR) {
+              if (InvUtils.fits(player.getInventory(), item)) {
+                player.getInventory().addItem(item);
+              } else {
+                player.getWorld().dropItemNaturally(player.getLocation(), item);
               }
             }
           }
-          p.closeInventory();
+          player.closeInventory();
         }
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 1) {
           e.setCancelled(true);

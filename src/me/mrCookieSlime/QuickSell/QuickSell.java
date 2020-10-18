@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Localization;
 import me.mrCookieSlime.CSCoreLibPlugin.PluginUtils;
 import me.mrCookieSlime.CSCoreLibSetup.CSCoreLibLoader;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
@@ -21,13 +20,14 @@ import me.mrCookieSlime.QuickSell.commands.BoosterListCommand;
 import me.mrCookieSlime.QuickSell.commands.PricesCommand;
 import me.mrCookieSlime.QuickSell.commands.PrivateBoosterCommand;
 import me.mrCookieSlime.QuickSell.commands.QSBaseCommand;
-import me.mrCookieSlime.QuickSell.commands.qscommand.EditorCommand;
-import me.mrCookieSlime.QuickSell.commands.qscommand.MainCommand;
-import me.mrCookieSlime.QuickSell.commands.qscommand.NpcLinkCommands;
-import me.mrCookieSlime.QuickSell.commands.qscommand.ReloadCommand;
-import me.mrCookieSlime.QuickSell.commands.qscommand.StopBoostersCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.EditorCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.MainCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.NpcLinkCommands;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.ReloadCommand;
+import me.mrCookieSlime.QuickSell.commands.QSCommand.StopBoostersCommand;
 import me.mrCookieSlime.QuickSell.commands.SellAllCommand;
 import me.mrCookieSlime.QuickSell.commands.SellCommand;
+import me.mrCookieSlime.QuickSell.configuration.Localization;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -83,7 +83,7 @@ public class QuickSell extends JavaPlugin {
       npcs = new Config("plugins/QuickSell/citizens_npcs.yml");
 
       PluginUtils utils = createUtils();
-      createLocale(utils);
+      createLocale();
       createConfig(utils);
       createListeners();
       reload();
@@ -175,8 +175,8 @@ public class QuickSell extends JavaPlugin {
     return utils;
   }
 
-  private void createLocale(PluginUtils utils) {
-    locale = utils.getLocalization();
+  private void createLocale() {
+    locale = new Localization(this);
     setDefaultLocaleProperties();
     locale.save();
   }
@@ -362,6 +362,7 @@ public class QuickSell extends JavaPlugin {
    */
   public void reload() {
     cfg.reload();
+    locale.reload();
     Shop.reset();
 
     for (String shop : cfg.getStringList("list")) {

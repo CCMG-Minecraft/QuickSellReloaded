@@ -72,8 +72,8 @@ public class ShopEditor implements Listener {
               e.getMessage());
           QuickSell.cfg.save();
 
-          QuickSell.locale.sendTranslation(e.getPlayer(), "commands.shop-created", false,
-              new Variable("%shop%", e.getMessage()));
+          QuickSell.locale.sendTranslation(e.getPlayer(), "commands.shop-created", false, "%shop%",
+              e.getMessage());
 
           openEditor(e.getPlayer());
 
@@ -365,8 +365,9 @@ public class ShopEditor implements Listener {
       openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
 
       QuickSell.locale.sendTranslation(p, "commands.price-set", false,
-          new Variable("%item%", item.getType().toString()), new Variable("%shop%", shop.getName()),
-          new Variable("%price%", "1.0"));
+          "%item%", item.getType().toString(),
+          "%shop%", shop.getName(),
+          "%price%", "1.0");
       p.sendMessage(
           ChatColor.translateAlternateColorCodes('&', "&7&oYou can edit the Price afterwards."));
       return false;
@@ -386,9 +387,11 @@ public class ShopEditor implements Listener {
 
       //noinspection deprecation
       QuickSell.locale.sendTranslation(p, "commands.price-set", false,
-          new Variable("%item%", item.getType().toString() + ":" + Objects
-              .requireNonNull(item.getData()).getData()),
-          new Variable("%shop%", shop.getName()), new Variable("%price%", "1.0"));
+          "%item%",
+          item.getType().toString() + ":" + Objects.requireNonNull(item.getData()).getData(),
+          "%shop%", shop.getName(),
+          "%price%", "1.0"
+      );
       p.sendMessage(
           ChatColor.translateAlternateColorCodes('&', "&7&oYou can edit the Price afterwards."));
       return false;
@@ -411,9 +414,13 @@ public class ShopEditor implements Listener {
       quicksell.reload();
       openShopContentEditor(player, Shop.getShop(shop.getId()), 1);
 
-      QuickSell.locale.sendTranslation(player, "commands.price-set", false, new Variable("%item%",
-              item.getType().toString() + " named " + item.getItemMeta().getDisplayName()),
-          new Variable("%shop%", shop.getName()), new Variable("%price%", "1.0"));
+      QuickSell.locale.sendTranslation(
+          player,
+          "commands.price-set",
+          false,
+          "%item%", item.getType().toString() + " named " + item.getItemMeta().getDisplayName(),
+          "%shop%", shop.getName(),
+          "%price%", "1.0");
       player.sendMessage(
           ChatColor.translateAlternateColorCodes('&', "&7&oYou can edit the Price afterwards."));
       return false;
@@ -616,10 +623,13 @@ public class ShopEditor implements Listener {
       QuickSell.cfg.save();
       quicksell.reload();
 
-      QuickSell.locale
-          .sendTranslation(p19, "commands.price-set", false, new Variable("%item%", string),
-              new Variable("%shop%", shop.getName()),
-              new Variable("%price%", DoubleHandler.getFancyDouble(worth)));
+      QuickSell.locale.sendTranslation(
+          p19,
+          "commands.price-set",
+          false,
+          "%item%", string,
+          "%shop%", shop.getName(),
+          "%price%", DoubleHandler.getFancyDouble(worth));
       openShopContentEditor(p19, Shop.getShop(shop.getId()), 1);
       return false;
     });

@@ -1,11 +1,10 @@
-package me.mrCookieSlime.QuickSell.commands.qscommand;
+package me.mrCookieSlime.QuickSell.commands.QSCommand;
 
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
 import java.util.Iterator;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Variable;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
 import me.mrCookieSlime.QuickSell.commands.QSBaseCommand;
@@ -33,8 +32,11 @@ public class StopBoostersCommand extends QSBaseCommand {
         booster.deactivate();
       }
     }
-    QuickSell.locale.sendTranslation(sender, "booster.reset", false,
-        new Variable("%player%", player.getName()));
+    QuickSell.locale.sendTranslation(
+        sender,
+        "booster.reset",
+        false,
+        "%player%", player.getName());
   }
 
   /**

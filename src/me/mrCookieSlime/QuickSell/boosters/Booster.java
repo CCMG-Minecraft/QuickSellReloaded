@@ -226,10 +226,12 @@ public class Booster {
             booster.extend(this);
             if (!silent) {
               if (this instanceof PrivateBooster && Bukkit.getPlayer(getOwner()) != null) {
-                QuickSell.locale.sendTranslation(Bukkit.getPlayer(getOwner()),
-                    "pbooster.extended." + type.toString(), false,
-                    new Variable("%time%", String.valueOf(this.getDuration())),
-                    new Variable("%multiplier%", String.valueOf(this.getBoosterMultiplier())));
+                QuickSell.locale.sendTranslation(
+                    Bukkit.getPlayer(getOwner()),
+                    "pbooster.extended." + type.toString(),
+                    false,
+                    "%time%", String.valueOf(this.getDuration()),
+                    "%multiplier%", String.valueOf(this.getBoosterMultiplier()));
               } else {
                 for (String message : QuickSell.locale
                     .getTranslation("booster.extended." + type.toString())) {
@@ -271,10 +273,12 @@ public class Booster {
     active.add(this);
     if (!silent) {
       if (this instanceof PrivateBooster && Bukkit.getPlayer(getOwner()) != null) {
-        QuickSell.locale
-            .sendTranslation(Bukkit.getPlayer(getOwner()), "pbooster.activate." + type.toString(),
-                false, new Variable("%time%", String.valueOf(this.getDuration())),
-                new Variable("%multiplier%", String.valueOf(this.getBoosterMultiplier())));
+        QuickSell.locale.sendTranslation(
+            Bukkit.getPlayer(getOwner()),
+            "pbooster.activate." + type.toString(),
+            false,
+            "%time%", String.valueOf(this.getDuration()),
+            "%multiplier%", String.valueOf(this.getBoosterMultiplier()));
       } else {
         for (String message : QuickSell.locale
             .getTranslation("booster.activate." + type.toString())) {
@@ -310,10 +314,12 @@ public class Booster {
     if (!silent) {
       if (this instanceof PrivateBooster) {
         if (Bukkit.getPlayer(getOwner()) != null) {
-          QuickSell.locale.sendTranslation(Bukkit.getPlayer(getOwner()),
-              "pbooster.deactivate." + type.toString(), false,
-              new Variable("%time%", String.valueOf(this.getDuration())),
-              new Variable("%multiplier%", String.valueOf(this.getBoosterMultiplier())));
+          QuickSell.locale.sendTranslation(
+              Bukkit.getPlayer(getOwner()),
+              "pbooster.deactivate." + type.toString(),
+              false,
+              "%time%", String.valueOf(this.getDuration()),
+              "%multiplier%", String.valueOf(this.getBoosterMultiplier()));
         }
       } else {
         for (String message : QuickSell.locale
