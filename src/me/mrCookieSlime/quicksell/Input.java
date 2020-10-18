@@ -1,21 +1,21 @@
 package me.mrCookieSlime.quicksell;
 
 public class Input {
-	
-	InputType type;
-	Object value;
-	
-	public Input(InputType type, Object value) {
-		this.type = type;
-		this.value = value;
-	}
-	
-	public InputType getType() {
-		return type;
-	}
-	
-	public Object getValue() {
-		return value;
-	}
+
+  InputType type;
+  Object value;
+
+  public Input(InputType type, Object value) {
+    this.type = type;
+    this.value = value;
+  }
+
+  public InputType getType() {
+    return type;
+  }
+
+  public Object getValue() {
+    return value;
+  }
 
 }
