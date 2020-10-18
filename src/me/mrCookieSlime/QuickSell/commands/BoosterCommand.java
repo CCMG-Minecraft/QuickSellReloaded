@@ -37,19 +37,14 @@ public class BoosterCommand extends QSBaseCommand {
         ? null
         : BoosterType.valueOf(typeName.toUpperCase());
     if (type != null || typeName.equalsIgnoreCase("all")) {
-      try {
-        if (type != null) {
-          Booster booster = new Booster(type, player.getName(), multiplier, duration);
+      if (type != null) {
+        Booster booster = new Booster(type, player.getName(), multiplier, duration);
+        booster.activate();
+      } else {
+        for (BoosterType bt : BoosterType.values()) {
+          Booster booster = new Booster(bt, player.getName(), multiplier, duration);
           booster.activate();
-        } else {
-          for (BoosterType bt : BoosterType.values()) {
-            Booster booster = new Booster(bt, player.getName(), multiplier, duration);
-            booster.activate();
-          }
         }
-      } catch (NumberFormatException x) {
-        msg(sender, "&cInvalid Duration.");
-        msg(sender, "&6/booster &e<all/money/exp> <player> <multiplier> <duration>");
       }
     }
   }

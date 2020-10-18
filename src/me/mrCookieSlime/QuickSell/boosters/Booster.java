@@ -247,11 +247,17 @@ public class Booster {
     }
 
     if (!infinite) {
-      File dataFolder = QuickSell.getInstance().getDataFolder();
+      File dataFolder = new File(QuickSell.getInstance().getDataFolder(), "boosters");
       File[] files = dataFolder.listFiles();
-      id = Integer.parseInt(files[files.length - 1].getName().replace(".booster", "")) + 1;
+      int lastId;
+      try {
+        lastId = Integer.parseInt(files[files.length - 1].getName().replaceAll("[^0-9]", ""));
+      } catch (ArrayIndexOutOfBoundsException e) {
+        lastId = 0;
+      }
+      id = lastId + 1;
 
-      cfg = new Config(new File(dataFolder, String.format("boosters/%s.booster", id)));
+      cfg = new Config(new File(dataFolder, String.format("%s.booster", id)));
       cfg.setValue("type", type.toString());
       cfg.setValue("owner", getOwner());
       cfg.setValue("multiplier", multiplier);
