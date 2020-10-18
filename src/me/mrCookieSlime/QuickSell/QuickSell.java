@@ -37,6 +37,7 @@ import me.mrCookieSlime.QuickSell.shop.ShopEditor;
 import me.mrCookieSlime.QuickSell.transactions.SellEvent;
 import me.mrCookieSlime.QuickSell.transactions.SellProfile;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -82,6 +83,9 @@ public class QuickSell extends JavaPlugin {
     CSCoreLibLoader loader = new CSCoreLibLoader(this);
     if (loader.load()) {
       instance = this;
+
+      // BStats
+      new Metrics(this, 9148);
 
       shop = new HashMap<>();
       events = new ArrayList<>();
