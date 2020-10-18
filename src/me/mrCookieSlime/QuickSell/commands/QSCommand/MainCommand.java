@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.HelpCommand;
 import co.aikar.commands.annotation.Subcommand;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.commands.QSBaseCommand;
@@ -26,7 +27,7 @@ public class MainCommand extends QSBaseCommand {
   @Description("Allows you to manage your Shops")
   @CommandPermission("quicksell.help")
   public void commandHelp(CommandSender sender) {
-    Map<String, String> commands = new HashMap<>();
+    Map<String, String> commands = new LinkedHashMap<>();
     commands.put("quicksell", "Shows this menu");
     commands.put("quicksell reload", "Reload QuickSell");
     commands.put("quicksell editor", "Open the in-game Shop Editor");
