@@ -1,4 +1,4 @@
-package me.mrCookieSlime.quicksell;
+package me.mrCookieSlime.QuickSell;
 
 public class Input {
 

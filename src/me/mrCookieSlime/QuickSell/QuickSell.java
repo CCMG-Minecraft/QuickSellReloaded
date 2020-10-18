@@ -1,4 +1,4 @@
-package me.mrCookieSlime.quicksell;
+package me.mrCookieSlime.QuickSell;
 
 import java.io.File;
 import java.text.ParseException;
@@ -15,12 +15,12 @@ import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Variable;
 import me.mrCookieSlime.CSCoreLibPlugin.PluginUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.String.StringUtils;
 import me.mrCookieSlime.CSCoreLibSetup.CSCoreLibLoader;
-import me.mrCookieSlime.quicksell.SellEvent.Type;
-import me.mrCookieSlime.quicksell.boosters.Booster;
-import me.mrCookieSlime.quicksell.boosters.BoosterMenu;
-import me.mrCookieSlime.quicksell.boosters.BoosterType;
-import me.mrCookieSlime.quicksell.boosters.PrivateBooster;
-import me.mrCookieSlime.quicksell.boosters.XpBoosterListener;
+import me.mrCookieSlime.QuickSell.SellEvent.Type;
+import me.mrCookieSlime.QuickSell.boosters.Booster;
+import me.mrCookieSlime.QuickSell.boosters.BoosterMenu;
+import me.mrCookieSlime.QuickSell.boosters.BoosterType;
+import me.mrCookieSlime.QuickSell.boosters.PrivateBooster;
+import me.mrCookieSlime.QuickSell.boosters.XpBoosterListener;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.economy.Economy;

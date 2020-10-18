@@ -1,4 +1,4 @@
-package me.mrCookieSlime.quicksell;
+package me.mrCookieSlime.QuickSell;
 
 import java.util.Objects;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;

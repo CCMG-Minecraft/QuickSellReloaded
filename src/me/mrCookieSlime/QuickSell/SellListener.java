@@ -1,4 +1,4 @@
-package me.mrCookieSlime.quicksell;
+package me.mrCookieSlime.QuickSell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.Objects;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Variable;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.InvUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
-import me.mrCookieSlime.quicksell.SellEvent.Type;
-import me.mrCookieSlime.quicksell.boosters.Booster;
-import me.mrCookieSlime.quicksell.boosters.BoosterType;
+import me.mrCookieSlime.QuickSell.SellEvent.Type;
+import me.mrCookieSlime.QuickSell.boosters.Booster;
+import me.mrCookieSlime.QuickSell.boosters.BoosterType;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;

@@ -5,7 +5,7 @@ website: http://thebusybiscuit.github.io/
 depend: [Vault]
 softdepend: [CS-CoreLib, mcMMO, Citizens, PrisonGems]
 
-main: me.mrCookieSlime.quicksell.QuickSell
+main: me.mrCookieSlime.QuickSell.QuickSell
 
 api-version: 1.16
 

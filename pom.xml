@@ -15,6 +15,10 @@
 
   <repositories>
     <repository>
+      <id>aikar</id>
+      <url>https://repo.aikar.co/content/groups/aikar/</url>
+    </repository>
+    <repository>
       <id>paper-repo</id>
       <url>https://repo.destroystokyo.com/repository/maven-public/</url>
     </repository>
@@ -50,6 +54,52 @@
         </includes>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <version>3.7.0</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml
+          </dependencyReducedPomLocation>
+          <relocations>
+            <relocation>
+              <pattern>co.aikar.commands</pattern>
+              <shadedPattern>me.mrCookieSlime.QuickSell.acf</shadedPattern> <!-- Replace this -->
+            </relocation>
+            <relocation>
+              <pattern>co.aikar.locales</pattern>
+              <shadedPattern>me.mrCookieSlime.QuickSell.locales
+              </shadedPattern> <!-- Replace this -->
+            </relocation>
+            <relocation>
+              <pattern>com.github.stefvanschie.inventoryframework</pattern>
+              <shadedPattern>me.mrCookieSlime.QuickSell.inventoryframework</shadedPattern>
+            </relocation>
+          </relocations>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
   <dependencies>
     <dependency>
@@ -82,11 +132,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>me.mrCookieSlime</groupId>
-      <artifactId>PrisonUtils</artifactId>
-      <version>1.6.11</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/PrisonUtils v1.6.11.jar</systemPath>
+      <groupId>co.aikar</groupId>
+      <artifactId>acf-paper</artifactId>
+      <version>0.5.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

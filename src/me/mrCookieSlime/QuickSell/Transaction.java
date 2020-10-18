@@ -1,6 +1,6 @@
-package me.mrCookieSlime.quicksell;
+package me.mrCookieSlime.QuickSell;
 
-import me.mrCookieSlime.quicksell.SellEvent.Type;
+import me.mrCookieSlime.QuickSell.SellEvent.Type;
 
 public class Transaction {
 

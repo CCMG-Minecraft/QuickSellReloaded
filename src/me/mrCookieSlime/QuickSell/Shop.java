@@ -1,4 +1,4 @@
-package me.mrCookieSlime.quicksell;
+package me.mrCookieSlime.QuickSell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,10 +10,9 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.InvUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Player.PlayerInventory;
-import me.mrCookieSlime.PrisonUtils.Backpacks;
-import me.mrCookieSlime.quicksell.SellEvent.Type;
-import me.mrCookieSlime.quicksell.boosters.Booster;
-import me.mrCookieSlime.quicksell.boosters.BoosterType;
+import me.mrCookieSlime.QuickSell.SellEvent.Type;
+import me.mrCookieSlime.QuickSell.boosters.Booster;
+import me.mrCookieSlime.QuickSell.boosters.BoosterType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -138,16 +137,7 @@ public class Shop {
     List<ItemStack> items = new ArrayList<>();
     for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
       ItemStack is = player.getInventory().getItem(slot);
-      if (QuickSell.getInstance().isPrisonUtilsInstalled() && Backpacks.isBackPack(is)) {
-        Inventory backpack = Backpacks.getInventory(is);
-        for (ItemStack itemstack : backpack.getContents()) {
-          if (getPrices().getPrice(itemstack) > 0.0) {
-            items.add(itemstack);
-            backpack.removeItem(itemstack);
-          }
-        }
-        Backpacks.saveBackpack(backpack, is);
-      } else if (getPrices().getPrice(is) > 0.0) {
+      if (getPrices().getPrice(is) > 0.0) {
         items.add(is);
         player.getInventory().setItem(slot, null);
       }

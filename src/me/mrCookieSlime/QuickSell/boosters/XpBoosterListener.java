@@ -1,7 +1,7 @@
-package me.mrCookieSlime.quicksell.boosters;
+package me.mrCookieSlime.QuickSell.boosters;
 
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Variable;
-import me.mrCookieSlime.quicksell.QuickSell;
+import me.mrCookieSlime.QuickSell.QuickSell;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

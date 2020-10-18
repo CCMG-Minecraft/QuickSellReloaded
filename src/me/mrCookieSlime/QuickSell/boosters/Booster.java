@@ -1,4 +1,4 @@
-package me.mrCookieSlime.quicksell.boosters;
+package me.mrCookieSlime.QuickSell.boosters;
 
 import java.io.File;
 import java.text.ParseException;
@@ -16,7 +16,7 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage.ClickAction;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage.HoverAction;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Clock;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
-import me.mrCookieSlime.quicksell.QuickSell;
+import me.mrCookieSlime.QuickSell.QuickSell;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,15 +25,19 @@ public class Booster {
 
   public static List<Booster> active = new ArrayList<>();
   public String owner;
+
   BoosterType type;
-  int id;
-  int minutes;
-  double multiplier;
   Date timeout;
   Config cfg;
+  File configFile;
+
+  Map<String, Integer> contributors = new HashMap<>();
+
+  int minutes;
+  int id;
+  double multiplier;
   boolean silent;
   boolean infinite;
-  Map<String, Integer> contributors = new HashMap<>();
 
   /**
    * A booster is a system which allows a player, or the entire server to receive a temporary or
@@ -64,7 +68,10 @@ public class Booster {
    * @throws ParseException If there is malformed configuration values (specifically in dates)
    */
   public Booster(File config) throws ParseException {
+    configFile = config;
+
     active.add(this);
+
     this.cfg = new Config(config);
     if (cfg.contains("type")) {
       this.type = BoosterType.valueOf(cfg.getString("type"));
@@ -240,13 +247,11 @@ public class Booster {
     }
 
     if (!infinite) {
-      for (int i = 0; i < 1000; i++) {
-        if (!new File(QuickSell.getInstance().getDataFolder(), "boosters/" + i + ".booster").exists()) {
-          this.id = i;
-          break;
-        }
-      }
-      this.cfg = new Config(new File(QuickSell.getInstance().getDataFolder(), "boosters/" + id + ".booster"));
+      File dataFolder = QuickSell.getInstance().getDataFolder();
+      File[] files = dataFolder.listFiles();
+      id = Integer.parseInt(files[files.length - 1].getName().replace(".booster", "")) + 1;
+
+      cfg = new Config(new File(dataFolder, String.format("boosters/%s.booster", id)));
       cfg.setValue("type", type.toString());
       cfg.setValue("owner", getOwner());
       cfg.setValue("multiplier", multiplier);
@@ -316,7 +321,8 @@ public class Booster {
     }
     if (!infinite) {
       //noinspection ResultOfMethodCallIgnored
-      new File(QuickSell.getInstance().getDataFolder(), "boosters/" + getId() + ".booster").delete();
+      new File(QuickSell.getInstance().getDataFolder(), "boosters/" + getId() + ".booster")
+          .delete();
     }
     active.remove(this);
   }
