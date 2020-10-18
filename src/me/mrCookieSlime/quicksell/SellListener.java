@@ -216,7 +216,7 @@ public class SellListener implements Listener {
 
           if (money > 0.0) {
             for (Booster booster : Booster.getBoosters(p.getName(), BoosterType.MONETARY)) {
-              money = money + money * (booster.getMultiplier() - 1);
+              money = money + money * (booster.getBoosterMultiplier() - 1);
             }
           }
           QuickSell.local.sendTranslation(p, "messages.estimate", false,

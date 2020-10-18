@@ -20,7 +20,7 @@ import me.mrCookieSlime.quicksell.boosters.Booster;
 import me.mrCookieSlime.quicksell.boosters.BoosterMenu;
 import me.mrCookieSlime.quicksell.boosters.BoosterType;
 import me.mrCookieSlime.quicksell.boosters.PrivateBooster;
-import me.mrCookieSlime.quicksell.boosters.XPBoosterListener;
+import me.mrCookieSlime.quicksell.boosters.XpBoosterListener;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.milkbowl.vault.economy.Economy;
@@ -228,7 +228,7 @@ public class QuickSell extends JavaPlugin {
       setupEconomy();
 
       new SellListener(this);
-      new XPBoosterListener(this);
+      new XpBoosterListener(this);
 
       if (isCitizensInstalled()) {
         new CitizensListener(this);

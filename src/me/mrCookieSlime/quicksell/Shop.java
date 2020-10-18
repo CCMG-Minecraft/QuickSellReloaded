@@ -241,9 +241,9 @@ public class Shop {
       if (booster.getType().equals(BoosterType.MONETARY)) {
         if (!silent) {
           booster.sendMessage(player, new Variable("{MONEY}",
-              DoubleHandler.getFancyDouble(money * (booster.getMultiplier() - 1))));
+              DoubleHandler.getFancyDouble(money * (booster.getBoosterMultiplier() - 1))));
         }
-        money = money + money * (booster.getMultiplier() - 1);
+        money = money + money * (booster.getBoosterMultiplier() - 1);
       }
     }
     if (!silent && !Booster.getBoosters(player.getName()).isEmpty()) {
