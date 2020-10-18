@@ -1,7 +1,6 @@
 package me.mrCookieSlime.QuickSell;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.PaperBrigadierManager;
 import co.aikar.commands.PaperCommandManager;
 import java.io.File;
 import java.text.ParseException;
@@ -22,11 +21,11 @@ import me.mrCookieSlime.QuickSell.commands.BoosterListCommand;
 import me.mrCookieSlime.QuickSell.commands.PricesCommand;
 import me.mrCookieSlime.QuickSell.commands.PrivateBoosterCommand;
 import me.mrCookieSlime.QuickSell.commands.QSBaseCommand;
-import me.mrCookieSlime.QuickSell.commands.QSCommand.EditorCommand;
-import me.mrCookieSlime.QuickSell.commands.QSCommand.MainCommand;
-import me.mrCookieSlime.QuickSell.commands.QSCommand.NpcLinkCommands;
-import me.mrCookieSlime.QuickSell.commands.QSCommand.ReloadCommand;
-import me.mrCookieSlime.QuickSell.commands.QSCommand.StopBoostersCommand;
+import me.mrCookieSlime.QuickSell.commands.qscommand.EditorCommand;
+import me.mrCookieSlime.QuickSell.commands.qscommand.MainCommand;
+import me.mrCookieSlime.QuickSell.commands.qscommand.NpcLinkCommands;
+import me.mrCookieSlime.QuickSell.commands.qscommand.ReloadCommand;
+import me.mrCookieSlime.QuickSell.commands.qscommand.StopBoostersCommand;
 import me.mrCookieSlime.QuickSell.commands.SellAllCommand;
 import me.mrCookieSlime.QuickSell.commands.SellCommand;
 import net.milkbowl.vault.economy.Economy;

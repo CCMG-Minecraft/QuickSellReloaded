@@ -1,4 +1,4 @@
-package me.mrCookieSlime.QuickSell.commands.QSCommand;
+package me.mrCookieSlime.QuickSell.commands.qscommand;
 
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
