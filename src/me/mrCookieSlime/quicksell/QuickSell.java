@@ -65,86 +65,102 @@ public class QuickSell extends JavaPlugin {
   public void onEnable() {
     CSCoreLibLoader loader = new CSCoreLibLoader(this);
     if (loader.load()) {
-      if (!new File(QuickSell.getInstance().getDataFolder(), "boosters/").exists()) {
-        if (!new File(QuickSell.getInstance().getDataFolder(), "/boosters").mkdirs()) {
-          getLogger().warning("Failed to create the boosters data storage directory.");
-        }
-      }
-
       instance = this;
 
       shop = new HashMap<>();
       events = new ArrayList<>();
       editor = new ShopEditor(this);
 
-      PluginUtils utils = new PluginUtils(this);
-      utils.setupConfig();
-      utils.setupMetrics();
-      utils.setupLocalization();
-
-      locale = utils.getLocalization();
-      setDefaultLocaleProperties();
-
-      locale.save();
-      cfg = utils.getConfig();
+      citizens = getServer().getPluginManager().isPluginEnabled("Citizens");
       npcs = new Config("plugins/QuickSell/citizens_npcs.yml");
 
-      if (cfg.contains("options.open-only-shop-with-permission")) {
-        cfg.setValue("shop.enable-hierarchy",
-            cfg.getBoolean("options.open-only-shop-with-permission"));
-        cfg.setValue("options.open-only-shop-with-permission", null);
-        cfg.save();
-      }
-
-      if (cfg.contains("boosters.same-multiplier-increases-time")) {
-        cfg.setValue("boosters.extension-mode",
-            cfg.getBoolean("boosters.same-multiplier-increases-time"));
-        cfg.setValue("boosters.same-multiplier-increases-time", null);
-        cfg.save();
-      }
-
-      if (cfg.getBoolean("shop.enable-logging")) {
-        registerSellEvent((p, type, itemsSold, money) -> {
-          SellProfile profile = SellProfile.getProfile(p);
-          profile.storeTransaction(type, itemsSold, money);
-        });
-      }
-
-      citizens = getServer().getPluginManager().isPluginEnabled("Citizens");
-
+      PluginUtils utils = createUtils();
+      createLocale(utils);
+      createConfig(utils);
+      createListeners();
       reload();
-
       setupEconomy();
+      createBoosters();
+      createScheduledTasks();
+    }
+  }
 
-      new SellListener(this);
-      new XpBoosterListener(this);
+  private void createScheduledTasks() {
+    getServer().getScheduler().scheduleSyncDelayedTask(this,
+        () -> backpacks = Bukkit.getPluginManager().isPluginEnabled("PrisonUtils"), 0L);
 
-      if (isCitizensInstalled()) {
-        new CitizensListener(this);
+    getServer().getScheduler().runTaskTimer(this,
+        Booster::update, 0L, cfg.getInt("boosters.refresh-every") * 20L);
+  }
+
+  private void createBoosters() {
+    if (!new File(QuickSell.getInstance().getDataFolder(), "boosters/").exists()) {
+      if (!new File(QuickSell.getInstance().getDataFolder(), "/boosters").mkdirs()) {
+        getLogger().warning("Failed to create the boosters data storage directory.");
       }
+    }
 
-      for (int i = 0; i < 1000; i++) {
-        if (new File(QuickSell.getInstance().getDataFolder(), "boosters/" + i + ".booster")
-            .exists()) {
-          try {
-            if (new Config(
-                new File(QuickSell.getInstance().getDataFolder(), "boosters/" + i + ".booster"))
-                .getBoolean("private")) {
-              new PrivateBooster(i);
-            } else {
-              new Booster(i);
-            }
-          } catch (ParseException e) {
-            e.printStackTrace();
+    File boostersFolder = new File(getDataFolder(), "boosters/");
+    for (File file : boostersFolder.listFiles()) {
+      if (file.getName().endsWith(".booster")) {
+        try {
+          if (new Config(file).getBoolean("private")) {
+            new PrivateBooster(file);
+          } else {
+            new Booster(file);
           }
+        } catch (ParseException e) {
+          e.printStackTrace();
         }
       }
+    }
+  }
 
-      getServer().getScheduler().scheduleSyncDelayedTask(this,
-          () -> backpacks = Bukkit.getPluginManager().isPluginEnabled("PrisonUtils"), 0L);
+  private void createListeners() {
+    new SellListener(this);
+    new XpBoosterListener(this);
 
-      getServer().getScheduler().runTaskTimer(this,
-          Booster::update, 0L, cfg.getInt("boosters.refresh-every") * 20L);
+    if (isCitizensInstalled()) {
+      new CitizensListener(this);
+    }
+  }
+
+  @NotNull
+  private PluginUtils createUtils() {
+    PluginUtils utils = new PluginUtils(this);
+    utils.setupConfig();
+    utils.setupMetrics();
+    utils.setupLocalization();
+    return utils;
+  }
+
+  private void createLocale(PluginUtils utils) {
+    locale = utils.getLocalization();
+    setDefaultLocaleProperties();
+    locale.save();
+  }
+
+  private void createConfig(PluginUtils utils) {
+    cfg = utils.getConfig();
+    if (cfg.contains("options.open-only-shop-with-permission")) {
+      cfg.setValue("shop.enable-hierarchy",
+          cfg.getBoolean("options.open-only-shop-with-permission"));
+      cfg.setValue("options.open-only-shop-with-permission", null);
+      cfg.save();
+    }
+
+    if (cfg.contains("boosters.same-multiplier-increases-time")) {
+      cfg.setValue("boosters.extension-mode",
+          cfg.getBoolean("boosters.same-multiplier-increases-time"));
+      cfg.setValue("boosters.same-multiplier-increases-time", null);
+      cfg.save();
+    }
+
+    if (cfg.getBoolean("shop.enable-logging")) {
+      registerSellEvent((p, type, itemsSold, money) -> {
+        SellProfile profile = SellProfile.getProfile(p);
+        profile.storeTransaction(type, itemsSold, money);
+      });
     }
   }
 

@@ -1,5 +1,6 @@
 package me.mrCookieSlime.quicksell.boosters;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
@@ -10,8 +11,8 @@ public class PrivateBooster extends Booster {
     super(type, owner, multiplier, minutes);
   }
 
-  public PrivateBooster(int id) throws ParseException {
-    super(id);
+  public PrivateBooster(File config) throws ParseException {
+    super(config);
   }
 
   @Override

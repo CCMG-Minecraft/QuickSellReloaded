@@ -60,13 +60,12 @@ public class Booster {
   /**
    * Retrieve a stored booster in the persistent data.
    *
-   * @param id The ID of the booster.
+   * @param config The config file of the booster.
    * @throws ParseException If there is malformed configuration values (specifically in dates)
    */
-  public Booster(int id) throws ParseException {
+  public Booster(File config) throws ParseException {
     active.add(this);
-    this.id = id;
-    this.cfg = new Config(new File(QuickSell.getInstance().getDataFolder(), "boosters/" + id + ".booster"));
+    this.cfg = new Config(config);
     if (cfg.contains("type")) {
       this.type = BoosterType.valueOf(cfg.getString("type"));
     } else {
