@@ -43,7 +43,7 @@ public class MainCommand extends QSBaseCommand {
 
     msg(sender, "");
     msg(sender, "&b&l QuickSell &r&9Reloaded &7(&f" + instance.getDescription().getVersion() + "&7)");
-    msg(sender, "&8 Plugin Help");
+    msg(sender, "&8  Plugin Help");
     msg(sender, "");
 
     for (Map.Entry<String, String> command : commands.entrySet()) {

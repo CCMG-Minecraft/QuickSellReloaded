@@ -1,6 +1,7 @@
 package me.mrCookieSlime.QuickSell;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.PaperBrigadierManager;
 import co.aikar.commands.PaperCommandManager;
 import java.io.File;
 import java.text.ParseException;
@@ -103,6 +104,7 @@ public class QuickSell extends JavaPlugin {
 
   private void registerCommandManager() {
     paperCommandManager = new PaperCommandManager(this);
+    paperCommandManager.enableUnstableAPI("brigadier");
     registerCommands(
         /*
         /quicksell sub commands

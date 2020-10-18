@@ -33,7 +33,9 @@ public class BoosterCommand extends QSBaseCommand {
       Double multiplier,
       Integer duration
   ) {
-    BoosterType type = typeName.equalsIgnoreCase("all") ? null : BoosterType.valueOf(typeName);
+    BoosterType type = typeName.equalsIgnoreCase("all")
+        ? null
+        : BoosterType.valueOf(typeName.toUpperCase());
     if (type != null || typeName.equalsIgnoreCase("all")) {
       try {
         if (type != null) {
