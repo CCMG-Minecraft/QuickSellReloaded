@@ -33,15 +33,39 @@ commands:
     usage: /prices <Shop>
 
 permissions:
-  QuickSell.sign.create:
+  quicksell.sign.create:
     description: Allows you to create SELL Signs
     default: op
-  QuickSell.booster:
+  quicksell.booster:
     description: Allows you to create a Booster
     default: op
-  QuickSell.manage:
+  quicksell.admin:
     description: Allows you to manage Shops
     default: op
-  QuickSell.prices:
+  quicksell.help:
+    description: Help Menu
+    default: op
+  quicksell.editor:
+    description: Allows you to use the in-game editor
+    default: op
+  quicksell.stopboosters:
+    description: Allows you to stop boosters
+    default: op
+  quicksell.linknpc:
+    description: Allows you to Link NPCs
+    default: op
+  quicksell.unlinknpc:
+    description: Allows you to Un-Link NPCs
+    default: op
+  quicksell.prices.anyshop:
+    description: Allows you to see the prices for any shop
+    default: op
+  quicksell.prices:
     description: Allows you to do /prices
+    default: op
+  quicksell.sell:
+    description: Allows you to run /sell
+    default: op
+  quicksell.sellall:
+    description: Allows you to run /sellall
     default: op

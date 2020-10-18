@@ -43,7 +43,7 @@ public class PricesCommand extends QSBaseCommand {
   public void commandSellAll(Player sender, String shopId) {
     Shop shop = Shop.getShop(shopId);
     if (shop != null) {
-      if (shop.hasUnlocked(sender)) {
+      if (shop.hasUnlocked(sender) || sender.hasPermission("quicksell.prices.anyshop")) {
         shop.showPrices(sender);
       } else {
         QuickSell.locale.sendTranslation(sender, "messages.no-access", false);
