@@ -25,7 +25,7 @@ public class MainCommand extends QSBaseCommand {
   @HelpCommand
   @Subcommand("help")
   @Description("Allows you to manage your Shops")
-  @CommandPermission("quicksell.help")
+  @CommandPermission("quicksell.help|quicksell.admin")
   public void commandHelp(CommandSender sender) {
     Map<String, String> commands = new LinkedHashMap<>();
     commands.put("quicksell", "Shows this menu");

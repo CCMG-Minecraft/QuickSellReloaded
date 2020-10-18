@@ -10,3 +10,5 @@
 
 # About this Plugin
 QuickSell Reloaded is a fork of the plugin [QuickSell](https://github.com/TheBusyBiscuit/QuickSell) by MrCookieSlime.
+
+It's perfect yfor your prison server
