@@ -234,20 +234,27 @@ public class QuickSell extends JavaPlugin {
     Booster.active = null;
   }
 
+  @SuppressWarnings("CheckStyle")
   private void setupCommandCompletions() {
-    paperCommandManager.getCommandCompletions().registerCompletion("allshops", c -> {
+    paperCommandManager.getCommandCompletions().registerAsyncCompletion("allshops", c -> {
       List<String> shopIds = new ArrayList<>();
       for (Shop shop : Shop.list()) {
-        shopIds.add(shop.getId());
+        try {
+          shopIds.add(shop.getId());
+        } catch (NullPointerException ignored) {
+        }
       }
       return Collections.unmodifiableList(shopIds);
     });
 
-    paperCommandManager.getCommandCompletions().registerCompletion("availableshops", c -> {
+    paperCommandManager.getCommandCompletions().registerAsyncCompletion("availableshops", c -> {
       List<String> shopIds = new ArrayList<>();
       for (Shop shop : Shop.list()) {
-        if (shop.hasUnlocked(c.getPlayer())) {
-          shopIds.add(shop.getId());
+        try {
+          if (shop.hasUnlocked(c.getPlayer())) {
+            shopIds.add(shop.getId());
+          }
+        } catch (NullPointerException ignored) {
         }
       }
       return Collections.unmodifiableList(shopIds);
