@@ -12,6 +12,7 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.String.StringUtils;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.shop.Shop;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 public class PriceInfo {
@@ -34,14 +35,30 @@ public class PriceInfo {
     this.order = new ArrayList<>();
     this.amount = QuickSell.cfg.getInt("shops." + shop.getId() + ".amount");
 
-    for (String key : Objects.requireNonNull(QuickSell.cfg.getConfiguration()
-        .getConfigurationSection("shops." + shop.getId() + ".price")).getKeys(false)) {
-      if (!prices.containsKey(key)
-          && QuickSell.cfg.getDouble("shops." + shop.getId() + ".price." + key) > 0.0) {
-        prices
-            .put(key, QuickSell.cfg.getDouble("shops." + shop.getId() + ".price." + key) / amount);
+    QuickSell instance = QuickSell.getInstance();
+
+    ConfigurationSection priceConfig = instance.getConfig().getConfigurationSection(
+        String.format("shops.%s.price", shop.getId())
+    );
+
+    assert priceConfig != null;
+
+    for (String key : Objects.requireNonNull(priceConfig.getKeys(false))) {
+      double price = priceConfig.getDouble(key);
+      if (price > 0d) {
+        prices.put(key, priceConfig.getDouble(key));
+        instance.getLogger().info("Registered: " + key);
+      } else {
+        instance.getLogger().warning(String.format(
+            "Not registering item %s in shop %s, as the price (%s) is below 0.",
+            key,
+            shop.getId(),
+            price
+        ));
       }
     }
+
+    QuickSell.getInstance().getLogger().info(prices.toString() + " (" + shop.getId() + ")");
 
     for (String parent : QuickSell.cfg.getStringList("shops." + shop.getId() + ".inheritance")) {
       loadParent(parent);
