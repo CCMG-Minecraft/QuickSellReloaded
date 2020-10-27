@@ -47,7 +47,6 @@ public class PriceInfo {
       double price = priceConfig.getDouble(key);
       if (price > 0d) {
         prices.put(key, priceConfig.getDouble(key));
-        instance.getLogger().info("Registered: " + key);
       } else {
         instance.getLogger().warning(String.format(
             "Not registering item %s in shop %s, as the price (%s) is below 0.",
