@@ -57,8 +57,6 @@ public class PriceInfo {
       }
     }
 
-    QuickSell.getInstance().getLogger().info(prices.toString() + " (" + shop.getId() + ")");
-
     for (String parent : QuickSell.cfg.getStringList("shops." + shop.getId() + ".inheritance")) {
       loadParent(parent);
     }
