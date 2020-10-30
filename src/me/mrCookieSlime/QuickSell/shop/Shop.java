@@ -270,14 +270,23 @@ public class Shop {
    * @return The relevant item, or NULL if invalid status.
    */
   public ItemStack getItem(ShopStatus status) {
+    ItemStack item = null;
     switch (status) {
       case LOCKED:
-        return locked;
+        item = locked;
+        break;
       case UNLOCKED:
-        return unlocked;
+        item = unlocked;
+        break;
       default:
-        return null;
+        item = null;
     }
+
+    if (item == null) {
+      return new ItemStack(Material.GOLD_INGOT);
+    }
+
+    return item;
   }
 
   public String getName() {
