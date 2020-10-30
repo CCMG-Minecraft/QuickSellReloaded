@@ -32,7 +32,6 @@ import me.mrCookieSlime.QuickSell.configuration.Localization;
 import me.mrCookieSlime.QuickSell.listener.CitizensListener;
 import me.mrCookieSlime.QuickSell.listener.SellListener;
 import me.mrCookieSlime.QuickSell.shop.Shop;
-import me.mrCookieSlime.QuickSell.shop.ShopEditor;
 import me.mrCookieSlime.QuickSell.transactions.SellEvent;
 import me.mrCookieSlime.QuickSell.transactions.SellProfile;
 import net.milkbowl.vault.economy.Economy;
@@ -50,7 +49,6 @@ public class QuickSell extends JavaPlugin {
   public static List<SellEvent> events;
   private static QuickSell instance;
   public Config npcs;
-  private ShopEditor editor;
 
   private PaperCommandManager paperCommandManager;
 
@@ -76,10 +74,6 @@ public class QuickSell extends JavaPlugin {
     return cfg;
   }
 
-  public ShopEditor getEditor() {
-    return editor;
-  }
-
   public Config getNpcs() {
     return npcs;
   }
@@ -95,7 +89,6 @@ public class QuickSell extends JavaPlugin {
 
       shop = new HashMap<>();
       events = new ArrayList<>();
-      editor = new ShopEditor(this);
 
       citizens = getServer().getPluginManager().isPluginEnabled("Citizens");
       npcs = new Config("plugins/QuickSell/citizens_npcs.yml");
@@ -124,7 +117,6 @@ public class QuickSell extends JavaPlugin {
         /*
         /quicksell sub commands
          */
-        new EditorCommand(),
         new MainCommand(),
         new NpcLinkCommands(),
         new ReloadCommand(),
