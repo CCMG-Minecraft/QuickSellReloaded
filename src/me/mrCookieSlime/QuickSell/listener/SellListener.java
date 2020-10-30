@@ -3,8 +3,6 @@ package me.mrCookieSlime.QuickSell.listener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.InvUtils;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.transactions.SellEvent.Type;
 import me.mrCookieSlime.QuickSell.transactions.SellProfile;
@@ -203,7 +201,7 @@ public class SellListener implements Listener {
             money = money + shop.getPrices().getPrice(item);
           }
 
-          money = DoubleHandler.fixDouble(money, 2);
+          money = Shop.fixDouble(money, 2);
 
           if (money > 0.0) {
             for (Booster booster : Booster.getBoosters(player.getName(), BoosterType.MONETARY)) {
@@ -214,7 +212,7 @@ public class SellListener implements Listener {
               player,
               "messages.estimate",
               false,
-              "{MONEY}", String.valueOf(DoubleHandler.fixDouble(money, 2))
+              "{MONEY}", String.valueOf(Shop.fixDouble(money, 2))
           );
         }
         if (e.getSlot() == 9 * QuickSell.cfg.getInt("options.sell-gui-rows") - 4) {
@@ -230,7 +228,7 @@ public class SellListener implements Listener {
           for (int i = 0; i < e.getInventory().getSize() - 9; i++) {
             ItemStack item = e.getInventory().getContents()[i];
             if (item.getType() != Material.AIR) {
-              if (InvUtils.fits(player.getInventory(), item)) {
+              if (player.getInventory().firstEmpty() >= 0) {
                 player.getInventory().addItem(item);
               } else {
                 player.getWorld().dropItemNaturally(player.getLocation(), item);

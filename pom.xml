@@ -134,11 +134,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.TheBusyBiscuit</groupId>
-      <artifactId>CS-CoreLib</artifactId>
-      <version>v1.6.1</version>
-    </dependency>
-    <dependency>
       <groupId>com.github.MilkBowl</groupId>
       <artifactId>VaultAPI</artifactId>
       <version>1.7</version>

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
+import me.mrCookieSlime.QuickSell.configuration.CustomItem;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.util.ItemUtility;
 import org.bukkit.Bukkit;

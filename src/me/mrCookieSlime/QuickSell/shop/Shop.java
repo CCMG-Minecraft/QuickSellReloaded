@@ -1,21 +1,19 @@
 package me.mrCookieSlime.QuickSell.shop;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Variable;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.InvUtils;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Player.PlayerInventory;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
 import me.mrCookieSlime.QuickSell.boosters.BoosterType;
+import me.mrCookieSlime.QuickSell.configuration.Variable;
 import me.mrCookieSlime.QuickSell.transactions.PriceInfo;
 import me.mrCookieSlime.QuickSell.transactions.SellEvent;
 import me.mrCookieSlime.QuickSell.transactions.SellEvent.Type;
+import me.mrCookieSlime.QuickSell.util.ItemUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -61,10 +59,11 @@ public class Shop {
     }
 
     try {
-      unlocked = new CustomItem(
+      unlocked = new ItemStack(
           Objects.requireNonNull(
-              Material.getMaterial(QuickSell.cfg.getString("shops." + shop + ".itemtype"))
-          ), name, lore.toArray(new String[0]));
+              Material.getMaterial(QuickSell.cfg.getString("shops." + shop + ".itemtype"))));
+      ItemUtility.rename(unlocked, name);
+      ItemUtility.setLore(unlocked, lore);
     } catch (NullPointerException e) {
       QuickSell.getInstance().getLogger().severe(String.format(
           "Not registering shop %s as it does not have 'itemtype' defined in its configuration.",
@@ -79,9 +78,10 @@ public class Shop {
       lore.add(ChatColor.translateAlternateColorCodes('&', line));
     }
 
-    locked = new CustomItem(Objects
-        .requireNonNull(Material.getMaterial(QuickSell.cfg.getString("options.locked-item"))),
-        name, lore.toArray(new String[0]));
+    locked = new ItemStack(Objects
+        .requireNonNull(Material.getMaterial(QuickSell.cfg.getString("options.locked-item"))));
+    ItemUtility.rename(locked, name);
+    ItemUtility.setLore(locked, lore);
 
     shops.add(this);
     map.put(this.shop.toLowerCase(), this);
@@ -117,6 +117,37 @@ public class Shop {
 
   public static Shop getShop(String id) {
     return map.get(id.toLowerCase());
+  }
+
+  public static String getFancyDouble(double d) {
+    DecimalFormat format = new DecimalFormat("##.##");
+
+    double d2 = d / 1000000000000000d;
+    if (d2 > 1) {
+      return format.format(d2).replace(",", ".") + "Q";
+    }
+
+    d2 = d / 1000000000000d;
+    if (d2 > 1) {
+      return format.format(d2).replace(",", ".") + "T";
+    }
+
+    d2 = d / 1000000000d;
+    if (d2 > 1) {
+      return format.format(d2).replace(",", ".") + "B";
+    }
+
+    d2 = d / 1000000d;
+    if (d2 > 1) {
+      return format.format(d2).replace(",", ".") + "M";
+    }
+
+    d2 = d / 1000d;
+    if (d2 > 1) {
+      return format.format(d2).replace(",", ".") + "K";
+    }
+
+    return format.format(d).replace(",", ".");
   }
 
   /**
@@ -156,7 +187,7 @@ public class Shop {
         player.getInventory().setItem(slot, null);
       }
     }
-    PlayerInventory.update(player);
+    player.updateInventory();
     sell(player, false, type, items.toArray(new ItemStack[0]));
   }
 
@@ -177,13 +208,14 @@ public class Shop {
       double money = 0.0;
       int sold = 0;
       int total = 0;
+
       for (ItemStack item : soldItems) {
         if (item != null) {
           total = total + item.getAmount();
           if (getPrices().getPrice(item) > 0.0) {
             sold = sold + item.getAmount();
             money = money + getPrices().getPrice(item);
-          } else if (InvUtils.fits(player.getInventory(), item)) {
+          } else if (player.getInventory().firstEmpty() >= 0) {
             player.getInventory().addItem(item);
           } else {
             player.getWorld().dropItemNaturally(player.getLocation(), item);
@@ -191,7 +223,7 @@ public class Shop {
         }
       }
 
-      money = DoubleHandler.fixDouble(money, 2);
+      money = fixDouble(money, 2);
 
       if (money > 0.0) {
         double totalmoney = handoutReward(player, money, sold, silent);
@@ -207,7 +239,7 @@ public class Shop {
               cmd = cmd.replace("{PLAYER}", player.getName());
             }
             if (cmd.contains("{MONEY}")) {
-              cmd = cmd.replace("{MONEY}", String.valueOf(DoubleHandler.fixDouble(totalmoney, 2)));
+              cmd = cmd.replace("{MONEY}", String.valueOf(fixDouble(totalmoney, 2)));
             }
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
           }
@@ -222,7 +254,22 @@ public class Shop {
         QuickSell.locale.sendTranslation(player, "messages.dropped", false);
       }
     }
-    PlayerInventory.update(player);
+    player.updateInventory();
+  }
+
+  public static double fixDouble(double amount, int digits) {
+    if (digits == 0) {
+      return (int) amount;
+    }
+    StringBuilder format = new StringBuilder("##");
+    for (int i = 0; i < digits; i++) {
+      if (i == 0) {
+        format.append(".");
+      }
+      format.append("#");
+    }
+    return Double
+        .parseDouble(new DecimalFormat(format.toString()).format(amount).replace(",", "."));
   }
 
   /**
@@ -238,14 +285,14 @@ public class Shop {
     double money = totalMoney;
     if (!silent) {
       QuickSell.locale.sendTranslation(player, "messages.sell", false,
-          "{MONEY}", DoubleHandler.getFancyDouble(money),
+          "{MONEY}", getFancyDouble(money),
           "{ITEMS}", String.valueOf(items));
     }
     for (Booster booster : Booster.getBoosters(player.getName())) {
       if (booster.getType().equals(BoosterType.MONETARY)) {
         if (!silent) {
           booster.sendMessage(player, new Variable("{MONEY}",
-              DoubleHandler.getFancyDouble(money * (booster.getBoosterMultiplier() - 1))));
+              getFancyDouble(money * (booster.getBoosterMultiplier() - 1))));
         }
         money = money + money * (booster.getBoosterMultiplier() - 1);
       }
@@ -255,10 +302,10 @@ public class Shop {
           player,
           "messages.total",
           false,
-          "{MONEY}", DoubleHandler.getFancyDouble(money)
+          "{MONEY}", getFancyDouble(money)
       );
     }
-    money = DoubleHandler.fixDouble(money, 2);
+    money = fixDouble(money, 2);
     QuickSell.economy.depositPlayer(player, money);
     return money;
   }

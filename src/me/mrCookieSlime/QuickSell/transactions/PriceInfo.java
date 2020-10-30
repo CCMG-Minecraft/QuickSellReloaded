@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
-import me.mrCookieSlime.CSCoreLibPlugin.general.String.StringUtils;
 import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.configuration.CustomItem;
+import me.mrCookieSlime.QuickSell.configuration.StringUtils;
 import me.mrCookieSlime.QuickSell.shop.Shop;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -70,8 +69,8 @@ public class PriceInfo {
         info.put(item, new CustomItem(Objects.requireNonNull(Material.getMaterial(item)),
             "&r" + StringUtils.formatItemName(new ItemStack(
                 Objects.requireNonNull(Material.getMaterial(item))), false), "",
-            "&7Worth (1): &6" + DoubleHandler.getFancyDouble(getPrices().get(item)),
-            "&7Worth (64): &6" + DoubleHandler.getFancyDouble(getPrices().get(item) * 64)));
+            "&7Worth (1): &6" + Shop.getFancyDouble(getPrices().get(item)),
+            "&7Worth (64): &6" + Shop.getFancyDouble(getPrices().get(item) * 64)));
         order.add(item);
       } else if (item.split("-").length > 1) {
         if (Material.getMaterial(item.split("-")[0]) != null) {
@@ -79,8 +78,8 @@ public class PriceInfo {
             info.put(item, new CustomItem(
                 new CustomItem(Objects.requireNonNull(Material.getMaterial(item.split("-")[0])),
                     item.split("-")[1], "",
-                    "&7Worth (1): &6" + DoubleHandler.getFancyDouble(getPrices().get(item)),
-                    "&7Worth (64): &6" + DoubleHandler.getFancyDouble(getPrices().get(item) * 64)),
+                    "&7Worth (1): &6" + Shop.getFancyDouble(getPrices().get(item)),
+                    "&7Worth (64): &6" + Shop.getFancyDouble(getPrices().get(item) * 64)),
                 getAmount()));
           } else {
             //noinspection CheckStyle
@@ -90,8 +89,8 @@ public class PriceInfo {
                   "&r" + StringUtils
                       .formatItemName(new ItemStack(
                           Objects.requireNonNull(Material.getMaterial(item.split("-")[0]))), false),
-                  "", "&7Worth (1): &6" + DoubleHandler.getFancyDouble(getPrices().get(item)),
-                  "&7Worth (64): &6" + DoubleHandler.getFancyDouble(getPrices().get(item) * 64)));
+                  "", "&7Worth (1): &6" + Shop.getFancyDouble(getPrices().get(item)),
+                  "&7Worth (64): &6" + Shop.getFancyDouble(getPrices().get(item) * 64)));
             } catch (ClassCastException ignored) {
             }
           }
@@ -170,7 +169,7 @@ public class PriceInfo {
     String string = toString(item);
 
     if (prices.containsKey(string)) {
-      return DoubleHandler.fixDouble(prices.get(string) * item.getAmount());
+      return Shop.fixDouble(prices.get(string) * item.getAmount(), 2);
     } else {
       return 0.0D;
     }

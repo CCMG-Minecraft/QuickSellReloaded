@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import me.mrCookieSlime.CSCoreLibSetup.CSCoreLibLoader;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
 import me.mrCookieSlime.QuickSell.boosters.PrivateBooster;
 import me.mrCookieSlime.QuickSell.boosters.XpBoosterListener;
@@ -79,29 +78,26 @@ public class QuickSell extends JavaPlugin {
 
   @Override
   public void onEnable() {
-    CSCoreLibLoader loader = new CSCoreLibLoader(this);
-    if (loader.load()) {
-      instance = this;
+    instance = this;
 
-      // BStats
-      new Metrics(this, 9148);
+    // BStats
+    new Metrics(this, 9148);
 
-      shop = new HashMap<>();
-      events = new ArrayList<>();
+    shop = new HashMap<>();
+    events = new ArrayList<>();
 
-      citizens = getServer().getPluginManager().isPluginEnabled("Citizens");
-      npcs = new Config("plugins/QuickSell/citizens_npcs.yml");
+    citizens = getServer().getPluginManager().isPluginEnabled("Citizens");
+    npcs = new Config("plugins/QuickSell/citizens_npcs.yml");
 
-      createLocale();
-      createConfig();
-      createListeners();
-      reload();
-      setupEconomy();
-      createBoosters();
-      createScheduledTasks();
+    createLocale();
+    createConfig();
+    createListeners();
+    reload();
+    setupEconomy();
+    createBoosters();
+    createScheduledTasks();
 
-      registerCommandManager();
-    }
+    registerCommandManager();
   }
 
   private void registerCommands(BaseCommand... commands) {

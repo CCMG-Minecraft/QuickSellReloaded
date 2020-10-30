@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.configuration.Config;
 import me.mrCookieSlime.QuickSell.transactions.SellEvent.Type;
 import org.bukkit.entity.Player;
 

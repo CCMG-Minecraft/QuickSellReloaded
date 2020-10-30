@@ -9,14 +9,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Variable;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage.ClickAction;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Chat.TellRawMessage.HoverAction;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Clock;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
 import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.configuration.Config;
+import me.mrCookieSlime.QuickSell.configuration.Variable;
+import me.mrCookieSlime.QuickSell.shop.Shop;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -140,7 +136,7 @@ public class Booster {
     for (Booster booster : getBoosters(player, type)) {
       multiplier = multiplier * booster.getBoosterMultiplier();
     }
-    return DoubleHandler.fixDouble(multiplier, 2);
+    return Shop.fixDouble(multiplier, 2);
   }
 
   /**
@@ -356,7 +352,7 @@ public class Booster {
   }
 
   public long formatTime() {
-    return ((getDeadLine().getTime() - Clock.getCurrentDate().getTime()) / (1000 * 60));
+    return ((getDeadLine().getTime() - System.currentTimeMillis()) / (1000 * 60));
   }
 
   /**
@@ -446,11 +442,7 @@ public class Booster {
       for (Variable v : variables) {
         message = v.apply(message);
       }
-      new TellRawMessage()
-          .addText(message)
-          .addClickEvent(ClickAction.RUN_COMMAND, "/boosters")
-          .addHoverEvent(HoverAction.SHOW_TEXT, BoosterMenu.getTellRawMessage(this))
-          .send(player);
+      player.sendMessage(message);
     } catch (Exception e) {
       e.printStackTrace();
     }

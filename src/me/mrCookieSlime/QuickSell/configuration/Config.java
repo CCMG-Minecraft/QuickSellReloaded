@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import me.mrCookieSlime.CSCoreLibPlugin.CSCoreLib;
-import me.mrCookieSlime.CSCoreLibPlugin.general.World.CustomSkull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -118,15 +117,6 @@ public class Config {
       this.store(path, String.valueOf(value));
     } else if (value instanceof ItemStack) {
       this.store(path, new ItemStack((ItemStack) value));
-      try {
-        if (((ItemStack) value).hasItemMeta() && ((ItemStack) value)
-            .getItemMeta() instanceof SkullMeta) {
-          this.store(path + "_extra.custom-skull", CustomSkull.getTexture((ItemStack) value));
-          this.store(path + "_extra.custom-skullOwner", CustomSkull.getName((ItemStack) value));
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
     } else if (value instanceof Location) {
       setValue(path + ".x", ((Location) value).getX());
       setValue(path + ".y", ((Location) value).getY());
@@ -215,10 +205,6 @@ public class Config {
     }
     try {
       if (item.hasItemMeta() && item.getItemMeta() instanceof SkullMeta) {
-        if (this.contains(path + "_extra.custom-skull")) {
-          CustomSkull
-              .getItem(item, this.getString(path + "_extra.custom-skull"));
-        }
         if (this.contains(path + "_extra.custom-skullOwner") && !(item).getItemMeta()
             .hasDisplayName()) {
           ItemMeta im = (item).getItemMeta();
@@ -244,7 +230,8 @@ public class Config {
    */
   @Deprecated
   public String getRandomStringfromList(String path) {
-    return getStringList(path).get(CSCoreLib.randomizer().nextInt(getStringList(path).size()));
+    List<String> list = getStringList(path);
+    return list.get(new Random().nextInt(list.size()));
   }
 
   /**
@@ -255,7 +242,8 @@ public class Config {
    */
   @Deprecated
   public int getRandomIntfromList(String path) {
-    return getIntList(path).get(CSCoreLib.randomizer().nextInt(getIntList(path).size()));
+    List<Integer> list = getIntList(path);
+    return list.get(new Random().nextInt(list.size()));
   }
 
   /**
