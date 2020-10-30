@@ -270,7 +270,7 @@ public class Shop {
    * @return The relevant item, or NULL if invalid status.
    */
   public ItemStack getItem(ShopStatus status) {
-    ItemStack item = null;
+    ItemStack item;
     switch (status) {
       case LOCKED:
         item = locked;
