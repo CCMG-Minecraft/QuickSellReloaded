@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.util.ItemUtility;
@@ -94,7 +93,9 @@ public class ShopMenu {
         if (Shop.list().get(i) != null) {
           final Shop shop = Shop.list().get(i);
 
-          ItemStack icon = shop.getItem(shop.hasUnlocked(player) ? ShopStatus.UNLOCKED : ShopStatus.LOCKED);
+          ItemStack icon = shop.getItem(
+              shop.hasUnlocked(player) ? ShopStatus.UNLOCKED : ShopStatus.LOCKED
+          );
           GuiItem item = new GuiItem(icon);
 
           item.setAction(event -> ShopMenu.open((Player) event.getWhoClicked(), shop));
