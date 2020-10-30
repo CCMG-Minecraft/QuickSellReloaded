@@ -72,30 +72,37 @@ public class ShopMenu {
   /**
    * Open the generic 'shop selection' menu to a player.
    *
-   * @param p The player to open the menu to
+   * @param player The player to open the menu to
    */
-  public static void openMenu(Player p) {
+  public static void openMenu(Player player) {
     if (QuickSell.cfg.getBoolean("shop.enable-hierarchy")) {
-      if (Shop.getHighestShop(p) != null) {
-        open(p, Objects.requireNonNull(Shop.getHighestShop(p)));
+      if (Shop.getHighestShop(player) != null) {
+        open(player, Objects.requireNonNull(Shop.getHighestShop(player)));
       } else {
-        QuickSell.locale.sendTranslation(p, "messages.no-access", false);
+        QuickSell.locale.sendTranslation(player, "messages.no-access", false);
       }
     } else {
-      ChestMenu menu = new ChestMenu(QuickSell.locale.getTranslation("menu.title").get(0));
+      String name = QuickSell.locale.getTranslation("menu.title").get(0);
+      name = ChatColor.translateAlternateColorCodes('&', name);
+      Gui gui = new Gui(6, name);
+      OutlinePane pane = new OutlinePane(0, 0, 9, 6);
+
+      gui.setOnGlobalClick(e -> e.setCancelled(true));
+      gui.addPane(pane);
 
       for (int i = 0; i < Shop.list().size(); i++) {
         if (Shop.list().get(i) != null) {
           final Shop shop = Shop.list().get(i);
-          menu.addItem(i,
-              shop.getItem(shop.hasUnlocked(p) ? ShopStatus.UNLOCKED : ShopStatus.LOCKED));
-          menu.addMenuClickHandler(i, (p1, slot, item, action) -> {
-            ShopMenu.open(p1, shop);
-            return false;
-          });
+
+          ItemStack icon = shop.getItem(shop.hasUnlocked(player) ? ShopStatus.UNLOCKED : ShopStatus.LOCKED);
+          GuiItem item = new GuiItem(icon);
+
+          item.setAction(event -> ShopMenu.open((Player) event.getWhoClicked(), shop));
+
+          pane.addItem(item);
         }
       }
-      menu.open(p);
+      gui.show(player);
     }
   }
 
