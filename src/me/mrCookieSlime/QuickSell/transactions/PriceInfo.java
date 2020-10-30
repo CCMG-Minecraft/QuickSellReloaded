@@ -83,13 +83,17 @@ public class PriceInfo {
                     "&7Worth (64): &6" + DoubleHandler.getFancyDouble(getPrices().get(item) * 64)),
                 getAmount()));
           } else {
-            info.put(item, new CustomItem(
-                Objects.requireNonNull(Material.getMaterial(item.split("-")[0])),
-                "&r" + StringUtils
-                    .formatItemName(new ItemStack(
-                        Objects.requireNonNull(Material.getMaterial(item.split("-")[0]))), false),
-                "", "&7Worth (1): &6" + DoubleHandler.getFancyDouble(getPrices().get(item)),
-                "&7Worth (64): &6" + DoubleHandler.getFancyDouble(getPrices().get(item) * 64)));
+            //noinspection CheckStyle
+            try {
+              info.put(item, new CustomItem(
+                  Objects.requireNonNull(Material.getMaterial(item.split("-")[0])),
+                  "&r" + StringUtils
+                      .formatItemName(new ItemStack(
+                          Objects.requireNonNull(Material.getMaterial(item.split("-")[0]))), false),
+                  "", "&7Worth (1): &6" + DoubleHandler.getFancyDouble(getPrices().get(item)),
+                  "&7Worth (64): &6" + DoubleHandler.getFancyDouble(getPrices().get(item) * 64)));
+            } catch (ClassCastException ignored) {
+            }
           }
           order.add(item);
         } else {

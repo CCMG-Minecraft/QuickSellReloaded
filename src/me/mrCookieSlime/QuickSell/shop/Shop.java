@@ -10,12 +10,12 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.InvUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Player.PlayerInventory;
-import me.mrCookieSlime.QuickSell.transactions.PriceInfo;
 import me.mrCookieSlime.QuickSell.QuickSell;
-import me.mrCookieSlime.QuickSell.transactions.SellEvent;
-import me.mrCookieSlime.QuickSell.transactions.SellEvent.Type;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
 import me.mrCookieSlime.QuickSell.boosters.BoosterType;
+import me.mrCookieSlime.QuickSell.transactions.PriceInfo;
+import me.mrCookieSlime.QuickSell.transactions.SellEvent;
+import me.mrCookieSlime.QuickSell.transactions.SellEvent.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -43,7 +43,12 @@ public class Shop {
    */
   public Shop(String id) {
     this.shop = id;
-    this.prices = new PriceInfo(this);
+
+    try {
+      this.prices = new PriceInfo(this);
+    } catch (Exception exception) {
+      // Ignored exception
+    }
 
     name = QuickSell.cfg.getString("shops." + shop + ".name");
     permission = QuickSell.cfg.getString("shops." + shop + ".permission");
@@ -55,10 +60,17 @@ public class Shop {
       lore.add(ChatColor.translateAlternateColorCodes('&', line));
     }
 
-    unlocked = new CustomItem(
-        Objects.requireNonNull(
-            Material.getMaterial(QuickSell.cfg.getString("shops." + shop + ".itemtype"))
-        ), name, lore.toArray(new String[0]));
+    try {
+      unlocked = new CustomItem(
+          Objects.requireNonNull(
+              Material.getMaterial(QuickSell.cfg.getString("shops." + shop + ".itemtype"))
+          ), name, lore.toArray(new String[0]));
+    } catch (NullPointerException e) {
+      QuickSell.getInstance().getLogger().severe(String.format(
+          "Not registering shop %s as it does not have 'itemtype' defined in its configuration.",
+          shop
+      ));
+    }
 
     lore = new ArrayList<>();
     lore.add(ChatColor.translateAlternateColorCodes('&',
