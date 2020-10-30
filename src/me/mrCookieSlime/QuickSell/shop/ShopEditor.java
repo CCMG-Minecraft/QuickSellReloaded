@@ -1,5 +1,8 @@
 package me.mrCookieSlime.QuickSell.shop;
 
+import com.github.stefvanschie.inventoryframework.Gui;
+import com.github.stefvanschie.inventoryframework.GuiItem;
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,10 +12,10 @@ import java.util.UUID;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
-import me.mrCookieSlime.CSCoreLibPlugin.general.audio.Soundboard;
+import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.input.Input;
 import me.mrCookieSlime.QuickSell.input.InputType;
-import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.util.ItemUtility;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,7 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class ShopEditor implements Listener {
@@ -46,8 +49,8 @@ public class ShopEditor implements Listener {
    *
    * @param e the bukkit chat listener
    */
-  @EventHandler(priority = EventPriority.LOWEST)
-  public void onChat(AsyncPlayerChatEvent e) {
+  @EventHandler(priority = EventPriority.HIGH)
+  public void onChat(@SuppressWarnings("deprecation") PlayerChatEvent e) {
     if (input.containsKey(e.getPlayer().getUniqueId())) {
       e.setCancelled(true);
 
@@ -122,111 +125,157 @@ public class ShopEditor implements Listener {
    */
   public void openEditor(Player p) {
     quicksell.reload();
-    ChestMenu menu = new ChestMenu("&6QuickSell - Shop Editor");
+    Gui gui = new Gui(6, "Shop Editor");
+    OutlinePane shops = new OutlinePane(0, 0, 9, 6);
 
-    menu.addMenuOpeningHandler(
-        p1 -> p1.playSound(p1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1F, 1F));
+    gui.setOnGlobalClick(e -> e.setCancelled(true));
+    gui.addPane(shops);
+
+    ItemStack newShopIcon = new ItemStack(Material.GOLD_NUGGET);
+    ItemUtility.rename(newShopIcon, "&cEmpty Slot");
+    ItemUtility.setLore(
+        newShopIcon,
+        "",
+        "&7Click: &bCreate a New Shop"
+    );
 
     for (int i = 0; i < 54; i++) {
       final Shop shop = Shop.list().size() > i ? Shop.list().get(i) : null;
       if (shop == null) {
-        menu.addItem(i, new CustomItem(Material.GOLD_NUGGET, "&cNew Shop", "",
-            "&rLeft Click: &7Create a new Shop"));
-        menu.addMenuClickHandler(i, (p12, slot, item, action) -> {
-          input.put(p12.getUniqueId(), new Input(InputType.NEW_SHOP, slot));
-          QuickSell.locale.sendTranslation(p12, "editor.create-shop", false);
-          p12.closeInventory();
-          return false;
+        GuiItem item = new GuiItem(newShopIcon);
+        item.setAction((event) -> {
+          input.put(
+              event.getWhoClicked().getUniqueId(), new Input(InputType.NEW_SHOP, event.getSlot())
+          );
+          QuickSell.getLocale().sendTranslation(event.getWhoClicked(), "editor.create-shop", false);
+          event.getWhoClicked().closeInventory();
         });
+
+        shops.addItem(item);
       } else {
-        menu.addItem(i, new CustomItem(shop.getItem(ShopStatus.UNLOCKED), shop.getName(), "",
-            "&rLeft Click: &7Edit Shop", "&rRight Click: &7Edit Shop Contents",
-            "&rShift + Right Click: &4Delete Shop"));
-        menu.addMenuClickHandler(i, (p13, slot, item, action) -> {
-          if (action.isRightClicked()) {
-            if (action.isShiftClicked()) {
-              List<String> list = new ArrayList<>();
-              for (Shop shop1 : Shop.list()) {
-                list.add(shop1.getId());
+        ItemStack icon = shop.getItem(ShopStatus.UNLOCKED);
+        if (icon == null) {
+          icon = new ItemStack(Material.GOLD_INGOT);
+        }
+        ItemUtility.rename(icon, String.format("&b%s", shop.getName()));
+        ItemUtility.setLore(
+            icon,
+            "",
+            "&7Left Click: &3Edit Shop Configuration",
+            "&7Right Click: &3Edit Shop Items",
+            "&7Shift + Right Click: &cDelete Shop"
+        );
+
+        GuiItem item = new GuiItem(icon);
+        item.setAction((event) -> {
+          if (event.isRightClick()) {
+            if (event.isShiftClick()) {
+              // Delete the Shop
+              List<String> newShops = new ArrayList<>();
+              for (Shop newShop : Shop.list()) {
+                if (!newShop.getId().equals(shop.getId())) {
+                  newShops.add(newShop.getId());
+                }
               }
-              list.remove(shop.getId());
-              QuickSell.cfg.setValue("list", list);
-              QuickSell.cfg.save();
+              QuickSell.getQuickSellConfig().setValue("list", newShops);
+              QuickSell.getQuickSellConfig().save();
               quicksell.reload();
-              openEditor(p13);
+
+              openEditor((Player) event.getWhoClicked());
             } else {
-              openShopContentEditor(p13, shop, 1);
+              openShopContentEditor((Player) event.getWhoClicked(), shop, 1);
             }
           } else {
-            openShopEditor(p13, shop);
+            openShopEditor((Player) event.getWhoClicked(), shop);
           }
-          return false;
         });
+        shops.addItem(item);
       }
     }
 
-    menu.open(p);
+    gui.show(p);
   }
 
   /**
    * Open a specific shop in the Shop Editor to a player.
    *
-   * @param p    the player to open the shop to
-   * @param shop the shop to show the player
+   * @param player the player to open the shop to
+   * @param shop   the shop to show the player
    */
-  public void openShopEditor(Player p, final Shop shop) {
+  public void openShopEditor(Player player, final Shop shop) {
     quicksell.reload();
-    ChestMenu menu = new ChestMenu("&6QuickSell - Shop Editor");
+    Gui gui = new Gui(1, String.format("Shop Configuration: %s", shop.getId()));
+    OutlinePane pane = new OutlinePane(0, 0, 9, 1);
 
-    menu.addMenuOpeningHandler(p1 -> p1
-        .playSound(p1.getLocation(), Soundboard.getLegacySounds("BLOCK_NOTE_PLING", "NOTE_PLING"),
-            1F, 1F));
+    gui.setOnGlobalClick(e -> e.setCancelled(true));
+    gui.addPane(pane);
 
-    menu.addItem(0,
-        new CustomItem(Material.NAME_TAG, shop.getName(), "", "&rClick: &7Change Name"));
-    menu.addMenuClickHandler(0, (p12, slot, item, action) -> {
-      input.put(p12.getUniqueId(), new Input(InputType.RENAME, shop));
-      QuickSell.locale.sendTranslation(p12, "editor.rename-shop", false);
-      p12.closeInventory();
-      return false;
+    ItemStack renameIcon = new ItemStack(Material.NAME_TAG);
+    ItemUtility.rename(renameIcon, String.format("&7Current Name: &b%s", shop.getName()));
+    ItemUtility.setLore(
+        renameIcon,
+        "",
+        "&7Click to Change Name"
+    );
+    GuiItem rename = new GuiItem(renameIcon);
+    rename.setAction((event) -> {
+      input.put(event.getWhoClicked().getUniqueId(), new Input(InputType.RENAME, shop));
+      event.getWhoClicked().closeInventory();
     });
+    pane.addItem(rename);
 
-    menu.addItem(1, new CustomItem(shop.getItem(ShopStatus.UNLOCKED), "&rDisplay Item", "",
-        "&rClick: &7Change Item to the Item held in your Hand"));
-    menu.addMenuClickHandler(1, (p13, slot, item, action) -> {
-      p13.getInventory().getItemInMainHand();
-      p13.getInventory().getItemInMainHand().getType();
-      if (p13.getInventory().getItemInMainHand().getType() != Material.AIR) {
-        //noinspection deprecation
-        QuickSell.cfg.setValue("shops." + shop.getId() + ".itemtype",
-            p13.getInventory().getItemInMainHand().getType().toString() + "-" + Objects
-                .requireNonNull(p13.getInventory().getItemInMainHand().getData())
-                .getData());
-        QuickSell.cfg.save();
+    ItemStack displayIcon = shop.getItem(ShopStatus.UNLOCKED);
+    ItemUtility.rename(displayIcon, "&7Display Icon");
+    ItemUtility.setLore(
+        displayIcon,
+        "",
+        "&7Click to set to the item",
+        "&7you are currently holding."
+    );
+    GuiItem display = new GuiItem(displayIcon);
+    display.setAction((event) -> {
+      event.getWhoClicked().closeInventory();
+      ItemStack held = event.getWhoClicked().getInventory().getItemInMainHand();
+      if (held.getType() != Material.AIR) {
+        QuickSell.getQuickSellConfig().setValue(
+            String.format("shops.%s.itemtype", shop.getId()),
+            String.format("%s-nodata", held.getType().name())
+        );
+        QuickSell.getQuickSellConfig().save();
         quicksell.reload();
       }
-      openShopEditor(p13, Shop.getShop(shop.getId()));
-      return false;
     });
+    pane.addItem(display);
 
-    menu.addItem(2, new CustomItem(Material.DIAMOND,
-        "&7Shop Permission: &r" + (shop.getPermission().equals("") ? "None" : shop.getPermission()),
-        "", "&rClick: &7Change Permission Node"));
-    menu.addMenuClickHandler(2, (p14, slot, item, action) -> {
-      input.put(p14.getUniqueId(), new Input(InputType.SET_PERMISSION, shop));
-      QuickSell.locale.sendTranslation(p14, "editor.set-permission-shop", false);
-      p14.closeInventory();
-      return false;
+    ItemStack permissionIcon = new ItemStack(Material.DIAMOND);
+    ItemUtility.rename(permissionIcon, String.format("&7Permission:&b %s", shop.getPermission()));
+    ItemUtility.setLore(
+        permissionIcon,
+        "",
+        "&7Click to Change Permission"
+    );
+    GuiItem permission = new GuiItem(permissionIcon);
+    permission.setAction((event) -> {
+      input.put(event.getWhoClicked().getUniqueId(), new Input(InputType.SET_PERMISSION, shop));
+      QuickSell.getLocale()
+          .sendTranslation(event.getWhoClicked(), "editor.set-permission-shop", false);
+      event.getWhoClicked().closeInventory();
     });
+    pane.addItem(permission);
 
-    menu.addItem(3, new CustomItem(Material.COMMAND_BLOCK, "&bInheritance Manager", "",
-        "&rClick: &7Open Inheritance Manager"));
-    menu.addMenuClickHandler(3, (p15, slot, item, action) -> {
-      openShopInheritanceEditor(p15, shop);
-      return false;
-    });
+    ItemStack inheritanceIcon = new ItemStack(Material.COMMAND_BLOCK);
+    ItemUtility.rename(inheritanceIcon, "&7Inheritance Manager");
+    ItemUtility.setLore(
+        inheritanceIcon,
+        "",
+        "&7Click to Open the Inheritance",
+        "&7Manager."
+    );
+    GuiItem inheritance = new GuiItem(inheritanceIcon);
+    inheritance.setAction(e -> openShopInheritanceEditor((Player) e.getWhoClicked(), shop));
+    pane.addItem(inheritance);
 
-    menu.open(p);
+    gui.show(player);
   }
 
   /**

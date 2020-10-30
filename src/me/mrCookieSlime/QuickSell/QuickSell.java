@@ -70,6 +70,14 @@ public class QuickSell extends JavaPlugin {
     return instance;
   }
 
+  public static Localization getLocale() {
+    return locale;
+  }
+
+  public static Config getQuickSellConfig() {
+    return cfg;
+  }
+
   public ShopEditor getEditor() {
     return editor;
   }

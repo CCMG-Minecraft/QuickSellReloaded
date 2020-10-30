@@ -12,6 +12,7 @@ import java.util.Objects;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.util.ItemUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,7 +20,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class ShopMenu {
 
@@ -149,12 +149,6 @@ public class ShopMenu {
     gui.show(player);
   }
 
-  private static void rename(ItemStack item, String name) {
-    ItemMeta meta = item.getItemMeta();
-    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-    item.setItemMeta(meta);
-  }
-
   /**
    * Build the GUI Footer.
    *
@@ -171,7 +165,7 @@ public class ShopMenu {
   ) {
 
     ItemStack nextButton = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
-    rename(nextButton, "&rNext Page ⇨");
+    ItemUtility.rename(nextButton, "&rNext Page ⇨");
     GuiItem nextGuiItem = new GuiItem(nextButton);
     nextGuiItem.setAction((event) -> {
       if (contents.getPage() < pages) {
@@ -184,7 +178,7 @@ public class ShopMenu {
     });
 
     ItemStack backButton = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
-    rename(backButton, "&r⇦ Previous Page");
+    ItemUtility.rename(backButton, "&r⇦ Previous Page");
     GuiItem backGuiItem = new GuiItem(backButton);
     backGuiItem.setAction((event) -> {
       if (contents.getPage() != 0) {
@@ -197,7 +191,7 @@ public class ShopMenu {
     });
 
     ItemStack blankItem = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
-    rename(blankItem, " ");
+    ItemUtility.rename(blankItem, " ");
     GuiItem blankGuiItem = new GuiItem(blankItem);
 
     // Add the footer of the GUI.
