@@ -285,7 +285,7 @@ public class Shop {
   }
 
   public void showPrices(Player p) {
-    ShopMenu.openPrices(p, this, 1);
+    ShopMenu.openPrices(p, this);
   }
 
 }

@@ -1,5 +1,13 @@
 package me.mrCookieSlime.QuickSell.shop;
 
+import com.github.stefvanschie.inventoryframework.Gui;
+import com.github.stefvanschie.inventoryframework.GuiItem;
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
@@ -11,6 +19,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class ShopMenu {
 
@@ -93,67 +102,111 @@ public class ShopMenu {
   /**
    * Open the Shop Prices menu to a player.
    *
-   * @param p    The player to open the menu to
-   * @param shop The shop which should be opened
-   * @param page The page of the shop to open to the player
+   * @param player The player to open the menu to
+   * @param shop   The shop which should be opened
    */
-  public static void openPrices(Player p, final Shop shop, final int page) {
-    ChestMenu menu = new ChestMenu("Shop Prices");
+  public static void openPrices(Player player, final Shop shop) {
 
-    menu.addMenuOpeningHandler(p1 -> p1.playSound(p1.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F));
+    // Construct the GUI and its Panes
+    Gui gui = new Gui(6, "Shop Prices");
+    gui.setOnGlobalClick((event) -> event.setCancelled(true));
 
-    int index = 0;
+    PaginatedPane contents = new PaginatedPane(0, 0, 9, 5);
+    gui.addPane(contents);
+
+    StaticPane footer = new StaticPane(0, 5, 9, 1);
+    gui.addPane(footer);
+
     final int pages = shop.getPrices().getInfo().size() / shopSize + 1;
 
-    for (int i = 45; i < 54; i++) {
-      menu.addItem(i, new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
-      menu.addMenuClickHandler(i, (arg0, arg1, arg2, arg3) -> false);
+    buildFooter(gui, contents, footer, pages);
+
+    int inShop = 0;
+    int currentPage = 1;
+
+    Map<Integer, OutlinePane> pagePanes = new HashMap<>();
+    pagePanes.put(currentPage, new OutlinePane(0, 0, 9, 5));
+
+    for (int i = 0; i < shop.getPrices().getItems().size(); i++) {
+      inShop++;
+      if (inShop > 45) {
+        inShop = 0;
+        currentPage++;
+        pagePanes.put(currentPage, new OutlinePane(0, 0, 9, 5));
+      }
+
+      final String string = shop.getPrices().getItems().get(i);
+      final ItemStack item = shop.getPrices().getItem(string);
+      final GuiItem guiItem = new GuiItem(item);
+      pagePanes.get(currentPage).addItem(guiItem);
     }
 
-    menu.addItem(46, new CustomItem(Material.LIME_STAINED_GLASS_PANE, "&r⇦ Previous Page", "",
-        "&7(" + page + " / " + pages + ")"));
-    menu.addMenuClickHandler(46, (p12, arg1, arg2, arg3) -> {
-      int next = page - 1;
-      if (next < 1) {
-        next = pages;
-      }
-      if (next != page) {
-        openPrices(p12, shop, next);
-      }
-      return false;
-    });
-
-    menu.addItem(52, new CustomItem(Material.LIME_STAINED_GLASS_PANE, "&rNext Page ⇨", "",
-        "&7(" + page + " / " + pages + ")"));
-    menu.addMenuClickHandler(52, (p13, arg1, arg2, arg3) -> {
-      int next = page + 1;
-      if (next > pages) {
-        next = 1;
-      }
-      if (next != page) {
-        openPrices(p13, shop, next);
-      }
-      return false;
-    });
-
-    int shopIndex = shopSize * (page - 1);
-
-    for (int i = 0; i < shopSize; i++) {
-      int target = shopIndex + i;
-      if (target >= shop.getPrices().getItems().size()) {
-        break;
-      } else {
-        final String string = shop.getPrices().getItems().get(target);
-        final ItemStack item = shop.getPrices().getItem(string);
-        menu.addItem(index, item);
-        menu.addMenuClickHandler(index, (p14, arg1, arg2, action) -> false);
-        index++;
-      }
-
+    for (Entry<Integer, OutlinePane> entry : pagePanes.entrySet()) {
+      contents.addPane(entry.getKey(), entry.getValue());
     }
 
-    // TODO: Change this to InventoryFramework
-    menu.build().open(p);
+    contents.setPage(1);
+    gui.show(player);
+  }
+
+  private static void rename(ItemStack item, String name) {
+    ItemMeta meta = item.getItemMeta();
+    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+    item.setItemMeta(meta);
+  }
+
+  /**
+   * Build the GUI Footer.
+   *
+   * @param gui      The GUI Object
+   * @param contents The Paginated Pane
+   * @param footer   The Footer Pane
+   * @param pages    The amount of Pages in the GUI
+   */
+  private static void buildFooter(
+      Gui gui,
+      PaginatedPane contents,
+      StaticPane footer,
+      Integer pages
+  ) {
+
+    ItemStack nextButton = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
+    rename(nextButton, "&rNext Page ⇨");
+    GuiItem nextGuiItem = new GuiItem(nextButton);
+    nextGuiItem.setAction((event) -> {
+      if (contents.getPage() < pages) {
+        ((Player) event.getWhoClicked()).playSound(
+            event.getWhoClicked().getLocation(), Sound.UI_BUTTON_CLICK, 1f, 1f
+        );
+        contents.setPage(contents.getPage() + 1);
+        gui.update();
+      }
+    });
+
+    ItemStack backButton = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
+    rename(backButton, "&r⇦ Previous Page");
+    GuiItem backGuiItem = new GuiItem(backButton);
+    backGuiItem.setAction((event) -> {
+      if (contents.getPage() != 0) {
+        ((Player) event.getWhoClicked()).playSound(
+            event.getWhoClicked().getLocation(), Sound.UI_BUTTON_CLICK, 1f, 1f
+        );
+        contents.setPage(contents.getPage() - 1);
+        gui.update();
+      }
+    });
+
+    ItemStack blankItem = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
+    rename(blankItem, " ");
+    GuiItem blankGuiItem = new GuiItem(blankItem);
+
+    // Add the footer of the GUI.
+    for (int x = 0; x < 9; x++) {
+      footer.addItem(blankGuiItem, x, 0);
+    }
+
+    footer.addItem(backGuiItem, 1, 0);
+    footer.addItem(nextGuiItem, 7, 0);
   }
 
 }
