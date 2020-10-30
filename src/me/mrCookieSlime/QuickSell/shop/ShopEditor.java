@@ -3,16 +3,20 @@ package me.mrCookieSlime.QuickSell.shop;
 import com.github.stefvanschie.inventoryframework.Gui;
 import com.github.stefvanschie.inventoryframework.GuiItem;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Math.DoubleHandler;
 import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.configuration.Config;
 import me.mrCookieSlime.QuickSell.input.Input;
 import me.mrCookieSlime.QuickSell.input.InputType;
 import me.mrCookieSlime.QuickSell.util.ItemUtility;
@@ -183,7 +187,7 @@ public class ShopEditor implements Listener {
 
               openEditor((Player) event.getWhoClicked());
             } else {
-              openShopContentEditor((Player) event.getWhoClicked(), shop, 1);
+              openShopContentEditor((Player) event.getWhoClicked(), shop);
             }
           } else {
             openShopEditor((Player) event.getWhoClicked(), shop);
@@ -281,106 +285,133 @@ public class ShopEditor implements Listener {
   /**
    * Open a Shop's Content Editor.
    *
-   * @param p    the player to show the menu to
-   * @param shop the shop to open
-   * @param page the page of the menu to open
+   * @param player the player to show the menu to
+   * @param shop   the shop to open
    */
-  public void openShopContentEditor(Player p, final Shop shop, final int page) {
+  public void openShopContentEditor(Player player, final Shop shop) {
     quicksell.reload();
-    ChestMenu menu = new ChestMenu("&6QuickSell - Shop Editor");
 
-    menu.addMenuOpeningHandler(
-        p1 -> p1.playSound(p1.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1F, 1F));
+    ItemStack backButtonIcon = new ItemStack(Material.GOLD_INGOT);
+    ItemUtility.rename(backButtonIcon, "&7⇦ Back");
+    GuiItem backButton = new GuiItem(backButtonIcon);
+    backButton.setAction(e -> openEditor(player));
 
-    int index = 9;
-    final int pages = shop.getPrices().getInfo().size() / shopSize + 1;
+    ItemStack blackGlassIcon = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+    ItemUtility.rename(blackGlassIcon, " ");
+    GuiItem blackGlass = new GuiItem(blackGlassIcon);
 
-    for (int i = 0; i < 4; i++) {
-      menu.addItem(i, new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
-      menu.addMenuClickHandler(i, (player, slot, item, action) -> false);
-    }
+    Gui gui = new Gui(6, String.format("Content Editor: %s", shop.getId()));
+    gui.setOnGlobalClick(e -> e.setCancelled(true));
 
-    menu.addItem(4, new CustomItem(Material.GOLD_INGOT, "&7⇦ Back"));
-    menu.addMenuClickHandler(4, (player, slot, item, action) -> {
-      openEditor(p);
-      return false;
-    });
-
-    for (int i = 5; i < 9; i++) {
-      menu.addItem(i, new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
-      menu.addMenuClickHandler(i, (player, slot, item, action) -> false);
-    }
-
-    for (int i = 45; i < 54; i++) {
-      menu.addItem(i, new CustomItem(Material.GRAY_STAINED_GLASS_PANE, " "));
-      menu.addMenuClickHandler(i, (player, slot, item, action) -> false);
-    }
-
-    menu.addItem(46, new CustomItem(Material.LIME_STAINED_GLASS_PANE, "&r⇦ Previous Page", "",
-        "&7(" + page + " / " + pages + ")"));
-    menu.addMenuClickHandler(46, (p12, arg1, arg2, arg3) -> {
-      int next = page - 1;
-      if (next < 1) {
-        next = pages;
-      }
-      if (next != page) {
-        openShopContentEditor(p12, shop, next);
-      }
-      return false;
-    });
-
-    menu.addItem(52, new CustomItem(Material.LIME_STAINED_GLASS_PANE, "&rNext Page ⇨", "",
-        "&7(" + page + " / " + pages + ")"));
-    menu.addMenuClickHandler(52, (p13, arg1, arg2, arg3) -> {
-      int next = page + 1;
-      if (next > pages) {
-        next = 1;
-      }
-      if (next != page) {
-        openShopContentEditor(p13, shop, next);
-      }
-      return false;
-    });
-
-    int shopIndex = shopSize * (page - 1);
-
-    for (int i = 0; i < shopSize; i++) {
-      int target = shopIndex + i;
-      if (target >= shop.getPrices().getItems().size()) {
-        menu.addItem(index, new CustomItem(Material.COMMAND_BLOCK, "&cAdd Item", "",
-            "&rLeft Click: &7Add an Item to this Shop"));
-        menu.addMenuClickHandler(index, (p14, arg1, arg2, arg3) -> {
-          openItemEditor(p14, shop);
-          return false;
-        });
-        break;
+    StaticPane header = new StaticPane(0, 0, 9, 1);
+    gui.addPane(header);
+    for (int i = 0; i < 9; i++) {
+      if (i == 4) {
+        header.addItem(backButton, i, 0);
       } else {
-        final String string = shop.getPrices().getItems().get(target);
-        final ItemStack item = shop.getPrices().getItem(string);
-
-        menu.addItem(index, new CustomItem(item.getType(), item.getItemMeta().getDisplayName(),
-            "&7Price (1): &6&$" + DoubleHandler.getFancyDouble(shop.getPrices().getPrice(string)),
-            "", "&rLeft Click: &7Edit Price",
-            "&rShift + Right Click: &7Remove this Item from this Shop"));
-        menu.addMenuClickHandler(index, (player, slot, stack, action) -> {
-          if (action.isShiftClicked() && action.isRightClicked()) {
-            QuickSell.cfg.setValue("shops." + shop.getId() + ".price." + string, 0.0D);
-            QuickSell.cfg.save();
-            quicksell.reload();
-            openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
-          } else if (!action.isRightClicked()) {
-            openPriceEditor(p, Shop.getShop(shop.getId()), item, string,
-                shop.getPrices().getPrice(string));
-          }
-          return false;
-        });
-
-        index++;
+        header.addItem(blackGlass, i, 0);
       }
-
     }
 
-    menu.open(p);
+    PaginatedPane contents = new PaginatedPane(0, 1, 9, 4);
+    gui.addPane(contents);
+    Map<Integer, OutlinePane> pages = new HashMap<>();
+
+    int currentPage = 0;
+    int currentSlot = 36;
+
+    for (String key : shop.getPrices().getItems()) {
+      currentSlot++;
+      if (currentSlot > 36) {
+        currentSlot = 0;
+        currentPage++;
+
+        pages.put(currentPage, new OutlinePane(0, 0, 9, 4));
+      }
+
+      ItemStack icon = shop.getPrices().getItem(key);
+      ItemUtility.setLore(
+          icon,
+          String.format("&7Price (1): &6$%s", shop.getPrices().getPrice(key)),
+          String.format("&7Price (64): &6$%s", shop.getPrices().getPrice(key) * 64),
+          "",
+          "&7Left Click: &bEdit Price",
+          "&7Shift & Right Click: &cRemove Item"
+      );
+      GuiItem item = new GuiItem(icon);
+      item.setAction(e -> {
+        if (e.isRightClick() && e.isShiftClick()) {
+          Config config = QuickSell.getQuickSellConfig();
+          config.setValue(String.format("shops.%s.price.%s", shop.getId(), key), 0.0D);
+          config.save();
+          quicksell.reload();
+          openShopContentEditor(player, shop);
+        } else if (e.isLeftClick()) {
+          openPriceEditor(
+              player,
+              shop,
+              shop.getPrices().getItem(key),
+              key,
+              shop.getPrices().getPrice(key)
+          );
+        }
+      });
+
+      pages.get(currentPage).addItem(item);
+    }
+
+    for (Entry<Integer, OutlinePane> entry : pages.entrySet()) {
+      contents.addPane(entry.getKey(), entry.getValue());
+    }
+
+    StaticPane footer = new StaticPane(0, 5, 9, 1);
+    gui.addPane(footer);
+
+    ItemStack backIcon = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+    ItemUtility.rename(backIcon, "&7⇦ Previous Page");
+    GuiItem back = new GuiItem(backIcon);
+    back.setAction(event -> {
+      if (contents.getPage() != 1) {
+        contents.setPage(contents.getPage() - 1);
+        gui.update();
+      }
+    });
+
+    ItemStack addItemIcon = new ItemStack(Material.COMMAND_BLOCK);
+    ItemUtility.rename(addItemIcon, "&bAdd Item");
+    ItemUtility.setLore(
+        addItemIcon,
+        "",
+        "&7Add the item you are currently",
+        "&7holding to this shop."
+    );
+    GuiItem addItem = new GuiItem(addItemIcon);
+    addItem.setAction(event -> openItemEditor(player, shop));
+
+    ItemStack nextIcon = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+    ItemUtility.rename(nextIcon, "&7⇦ Previous Page");
+    GuiItem next = new GuiItem(nextIcon);
+    next.setAction(event -> {
+      if (contents.getPage() != contents.getPages()) {
+        contents.setPage(contents.getPage() + 1);
+        gui.update();
+      }
+    });
+
+    for (int i = 0; i < 9; i++) {
+      if (i == 1) {
+        footer.addItem(back, i, 0);
+      } else if (i == 4) {
+        footer.addItem(addItem, i, 0);
+      } else if (i == 7) {
+        footer.addItem(next, i, 0);
+      } else {
+        footer.addItem(blackGlass, i, 0);
+      }
+    }
+
+    contents.setPage(1);
+    gui.show(player);
   }
 
   /**
@@ -413,7 +444,7 @@ public class ShopEditor implements Listener {
       QuickSell.cfg.setValue("shops." + shop.getId() + ".price." + item.getType().toString(), 1.0D);
       QuickSell.cfg.save();
       quicksell.reload();
-      openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
+      openShopContentEditor(p, Shop.getShop(shop.getId()));
 
       QuickSell.locale.sendTranslation(p, "commands.price-set", false,
           "%item%", item.getType().toString(),
@@ -434,7 +465,7 @@ public class ShopEditor implements Listener {
               1.0D);
       QuickSell.cfg.save();
       quicksell.reload();
-      openShopContentEditor(p, Shop.getShop(shop.getId()), 1);
+      openShopContentEditor(p, Shop.getShop(shop.getId()));
 
       //noinspection deprecation
       QuickSell.locale.sendTranslation(p, "commands.price-set", false,
@@ -463,7 +494,7 @@ public class ShopEditor implements Listener {
               .getDisplayName().replaceAll("&", "&"), 1.0D);
       QuickSell.cfg.save();
       quicksell.reload();
-      openShopContentEditor(player, Shop.getShop(shop.getId()), 1);
+      openShopContentEditor(player, Shop.getShop(shop.getId()));
 
       QuickSell.locale.sendTranslation(
           player,
@@ -479,7 +510,7 @@ public class ShopEditor implements Listener {
 
     menu.addItem(16, new CustomItem(Material.RED_WOOL, "&cCancel"));
     menu.addMenuClickHandler(16, (player, slot, stack, action) -> {
-      openShopContentEditor(player, Shop.getShop(shop.getId()), 1);
+      openShopContentEditor(player, Shop.getShop(shop.getId()));
       return false;
     });
 
@@ -681,12 +712,12 @@ public class ShopEditor implements Listener {
           "%item%", string,
           "%shop%", shop.getName(),
           "%price%", DoubleHandler.getFancyDouble(worth));
-      openShopContentEditor(p19, Shop.getShop(shop.getId()), 1);
+      openShopContentEditor(p19, Shop.getShop(shop.getId()));
       return false;
     });
     menu.addItem(24, new CustomItem(Material.RED_WOOL, "&4Cancel"));
     menu.addMenuClickHandler(24, (p110, arg1, arg2, arg3) -> {
-      openShopContentEditor(p110, Shop.getShop(shop.getId()), 1);
+      openShopContentEditor(p110, Shop.getShop(shop.getId()));
       return false;
     });
 
