@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import me.mrCookieSlime.CSCoreLibPlugin.PluginUtils;
 import me.mrCookieSlime.CSCoreLibSetup.CSCoreLibLoader;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
 import me.mrCookieSlime.QuickSell.boosters.PrivateBooster;
@@ -28,6 +26,7 @@ import me.mrCookieSlime.QuickSell.commands.QSCommand.ReloadCommand;
 import me.mrCookieSlime.QuickSell.commands.QSCommand.StopBoostersCommand;
 import me.mrCookieSlime.QuickSell.commands.SellAllCommand;
 import me.mrCookieSlime.QuickSell.commands.SellCommand;
+import me.mrCookieSlime.QuickSell.configuration.Config;
 import me.mrCookieSlime.QuickSell.configuration.DefaultLocale;
 import me.mrCookieSlime.QuickSell.configuration.Localization;
 import me.mrCookieSlime.QuickSell.listener.CitizensListener;
@@ -41,7 +40,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 public class QuickSell extends JavaPlugin {
 
@@ -102,9 +100,8 @@ public class QuickSell extends JavaPlugin {
       citizens = getServer().getPluginManager().isPluginEnabled("Citizens");
       npcs = new Config("plugins/QuickSell/citizens_npcs.yml");
 
-      PluginUtils utils = createUtils();
       createLocale();
-      createConfig(utils);
+      createConfig();
       createListeners();
       reload();
       setupEconomy();
@@ -187,23 +184,14 @@ public class QuickSell extends JavaPlugin {
     }
   }
 
-  @NotNull
-  private PluginUtils createUtils() {
-    PluginUtils utils = new PluginUtils(this);
-    utils.setupConfig();
-    utils.setupMetrics();
-    utils.setupLocalization();
-    return utils;
-  }
-
   private void createLocale() {
     locale = new Localization(this);
     DefaultLocale.setDefaultLocale(locale);
     locale.save();
   }
 
-  private void createConfig(PluginUtils utils) {
-    cfg = utils.getConfig();
+  private void createConfig() {
+    cfg = new Config(this);
     if (cfg.contains("options.open-only-shop-with-permission")) {
       cfg.setValue("shop.enable-hierarchy",
           cfg.getBoolean("options.open-only-shop-with-permission"));
