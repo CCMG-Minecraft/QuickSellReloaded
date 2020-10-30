@@ -19,7 +19,6 @@ import me.mrCookieSlime.QuickSell.commands.BoosterListCommand;
 import me.mrCookieSlime.QuickSell.commands.PricesCommand;
 import me.mrCookieSlime.QuickSell.commands.PrivateBoosterCommand;
 import me.mrCookieSlime.QuickSell.commands.QSBaseCommand;
-import me.mrCookieSlime.QuickSell.commands.QSCommand.EditorCommand;
 import me.mrCookieSlime.QuickSell.commands.QSCommand.MainCommand;
 import me.mrCookieSlime.QuickSell.commands.QSCommand.NpcLinkCommands;
 import me.mrCookieSlime.QuickSell.commands.QSCommand.ReloadCommand;

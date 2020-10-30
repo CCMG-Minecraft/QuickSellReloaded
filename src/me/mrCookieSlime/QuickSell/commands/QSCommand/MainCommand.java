@@ -30,7 +30,6 @@ public class MainCommand extends QSBaseCommand {
     Map<String, String> commands = new LinkedHashMap<>();
     commands.put("quicksell", "Shows this menu");
     commands.put("quicksell reload", "Reload QuickSell");
-    commands.put("quicksell editor", "Open the in-game Shop Editor");
     commands.put("quicksell stopboosters [player]", "Stop Boosters");
     commands.put("quicksell linknpc <shop> <sell/sellall>", "Link a NPC to a Shop");
     commands.put("quicksell unlinknpc", "Un-link selected NPC from its shop");
