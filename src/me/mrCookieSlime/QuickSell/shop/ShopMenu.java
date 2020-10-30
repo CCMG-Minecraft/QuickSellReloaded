@@ -189,7 +189,7 @@ public class ShopMenu {
     ItemUtility.rename(backButton, "&r⇦ Previous Page");
     GuiItem backGuiItem = new GuiItem(backButton);
     backGuiItem.setAction((event) -> {
-      if (contents.getPage() != 0) {
+      if (contents.getPage() != 1) {
         ((Player) event.getWhoClicked()).playSound(
             event.getWhoClicked().getLocation(), Sound.UI_BUTTON_CLICK, 1f, 1f
         );
