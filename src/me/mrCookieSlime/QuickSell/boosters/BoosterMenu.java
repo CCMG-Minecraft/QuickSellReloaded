@@ -1,15 +1,20 @@
 package me.mrCookieSlime.QuickSell.boosters;
 
+import com.github.stefvanschie.inventoryframework.Gui;
+import com.github.stefvanschie.inventoryframework.GuiItem;
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.Item.CustomItem;
-import me.mrCookieSlime.CSCoreLibPlugin.general.String.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class BoosterMenu {
 
@@ -19,15 +24,15 @@ public class BoosterMenu {
    * @param player The player to show the booster overview of (themselves) to.
    */
   public static void showBoosterOverview(Player player) {
-    ChestMenu menu = new ChestMenu("&3Booster Overview");
+    Gui gui = new Gui(1, "Booster Overview");
+    gui.setOnGlobalClick(e -> e.setCancelled(true));
 
-    addBoosterHeading(player, menu);
-    menu.addMenuClickHandler(7, (p, slot, item, action) -> {
-      showBoosterDetails(p, BoosterType.EXP);
-      return false;
-    });
+    StaticPane pane = new StaticPane(0, 0, 9, 1);
+    gui.addPane(pane);
 
-    menu.open(player);
+    addBoosterHeading(player, pane, false);
+
+    gui.show(player);
   }
 
   /**
@@ -37,39 +42,75 @@ public class BoosterMenu {
    * @param type   The type of booster to to get information on
    */
   public static void showBoosterDetails(Player player, BoosterType type) {
-    ChestMenu menu = new ChestMenu("&3" + StringUtils.format(type.toString()) + " Boosters");
+    Gui gui = new Gui(
+        6,
+        String.format("%s Boosters", StringUtils.capitalize(type.name().toLowerCase()))
+    );
+    gui.setOnGlobalClick(e -> e.setCancelled(true));
 
-    addBoosterHeading(player, menu);
-    menu.addMenuClickHandler(7, (p, slot, item, action) -> {
-      showBoosterDetails(p, BoosterType.EXP);
-      return false;
-    });
+    StaticPane header = new StaticPane(0, 0, 9, 2);
+    addBoosterHeading(player, header, true);
+    gui.addPane(header);
 
-    int index = 9;
+    OutlinePane content = new OutlinePane(0, 2, 9, 4);
 
     for (Booster booster : Booster.getBoosters(player.getName(), type)) {
-      menu.addItem(index, getBoosterItem(booster));
-      menu.addMenuClickHandler(index, (plr, slot, stack, action) -> false);
-
-      index++;
+      content.addItem(new GuiItem(getBoosterItem(booster)));
     }
 
-    menu.open(player);
+    gui.show(player);
   }
 
-  private static void addBoosterHeading(Player player, ChestMenu menu) {
-    menu.addItem(1, new CustomItem(Material.GOLD_INGOT, "&bBoosters (Money)",
-        "&7Current Multiplier: &b" + Booster.getMultiplier(player.getName(), BoosterType.MONETARY),
+  private static void addBoosterHeading(Player player, StaticPane menu, Boolean secondRow) {
+    ItemStack monetaryIcon = new ItemStack(Material.GOLD_INGOT);
+    String monetaryName = "§bBoosters (Money)";
+    double monetaryBooster = Booster.getMultiplier(player.getName(), BoosterType.MONETARY);
+    List<String> monetaryLore = Arrays.asList(
+        String.format("§7Current Multiplier: §b%s§7.", monetaryBooster),
         "",
-        "&7⇨ Click for Details"));
-    menu.addMenuClickHandler(1, (p, slot, item, action) -> {
-      showBoosterDetails(p, BoosterType.MONETARY);
-      return false;
+        "§7⇨ Click for Details"
+    );
+    ItemMeta monetaryMeta = monetaryIcon.getItemMeta();
+    monetaryMeta.setDisplayName(monetaryName);
+    monetaryMeta.setLore(monetaryLore);
+    monetaryIcon.setItemMeta(monetaryMeta);
+    GuiItem monetary = new GuiItem(monetaryIcon);
+    monetary.setAction((event) -> {
+      event.setCancelled(true);
+      showBoosterDetails(player, BoosterType.MONETARY);
     });
 
-    menu.addItem(7, new CustomItem(Material.EXPERIENCE_BOTTLE, "&bBoosters (Experience)",
-        "&7Current Multiplier: &b" + Booster.getMultiplier(player.getName(), BoosterType.EXP), "",
-        "&7⇨ Click for Details"));
+    ItemStack experienceIcon = new ItemStack(Material.EXPERIENCE_BOTTLE);
+    String experienceName = "§bBoosters (Experience)";
+    double experienceBooster = Booster.getMultiplier(player.getName(), BoosterType.EXP);
+    List<String> experienceLore = Arrays.asList(
+        String.format("§7Current Multiplier: §b%s§7.", experienceBooster),
+        "",
+        "§7⇨ Click for Details"
+    );
+    ItemMeta experienceMeta = experienceIcon.getItemMeta();
+    experienceMeta.setDisplayName(experienceName);
+    experienceMeta.setLore(experienceLore);
+    experienceIcon.setItemMeta(experienceMeta);
+    GuiItem experience = new GuiItem(experienceIcon);
+    experience.setAction((event) -> {
+      event.setCancelled(true);
+      showBoosterDetails(player, BoosterType.EXP);
+    });
+
+    menu.addItem(monetary, 1, 0);
+    menu.addItem(experience, 7, 0);
+
+    if (secondRow) {
+      ItemStack blankIcon = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
+      ItemMeta blankMeta = blankIcon.getItemMeta();
+      blankMeta.setDisplayName(" ");
+      blankIcon.setItemMeta(blankMeta);
+      GuiItem blank = new GuiItem(blankIcon);
+      for (int i = 0; i < 9; i++) {
+        menu.addItem(blank, i, 1);
+      }
+    }
   }
 
   /**
