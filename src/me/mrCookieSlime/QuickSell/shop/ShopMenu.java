@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import me.mrCookieSlime.QuickSell.configuration.CustomItem;
 import me.mrCookieSlime.QuickSell.QuickSell;
+import me.mrCookieSlime.QuickSell.configuration.CustomItem;
 import me.mrCookieSlime.QuickSell.util.ItemUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +19,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class ShopMenu {
 
@@ -145,6 +146,14 @@ public class ShopMenu {
 
       final String string = shop.getPrices().getItems().get(i);
       final ItemStack item = shop.getPrices().getItem(string);
+      if (item.getItemMeta().hasDisplayName()) {
+        String name = ChatColor.stripColor(item.getItemMeta().getDisplayName());
+        if (name.equalsIgnoreCase(item.getType().name())) {
+          ItemMeta meta = item.getItemMeta();
+          meta.setDisplayName(null);
+          item.setItemMeta(meta);
+        }
+      }
       final GuiItem guiItem = new GuiItem(item);
       pagePanes.get(currentPage).addItem(guiItem);
     }
