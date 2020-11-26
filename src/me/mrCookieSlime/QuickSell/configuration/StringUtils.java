@@ -23,7 +23,7 @@ public class StringUtils {
         name = (String) toString.invoke(getName.invoke(instance));
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      // Somewhat expected behaviour
     }
     if (item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
       name = item.getItemMeta().getDisplayName();
