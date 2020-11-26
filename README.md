@@ -49,17 +49,6 @@ Reload all configurations, shops and messages. While this command *should* reloa
 **Permission**
 
 `quicksell.reload` and/or `quicksell.admin`
-### /quicksell editor
-**Description**
-
-Open the QuickSell Editor GUI, which allows you to configure shops easily and dynamically with a rich, visual interface.
-**Example Usage**
-
-`/quicksell editor`
-
-**Permission**
-
-`quicksell.editor` and/or `quicksell.admin`
 ### /quicksell stopboosters [player]
 **Description**
 
