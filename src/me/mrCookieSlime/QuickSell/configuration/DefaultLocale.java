@@ -8,6 +8,9 @@ public class DefaultLocale {
    * @param locale The locale instance
    */
   public static void setDefaultLocale(Localization locale) {
+    locale.setDefault("sellall.prompt.title", "&8Confirm Sellall");
+    locale.setDefault("sellall.prompt.item.name", "&a&lSell All");
+    locale.setDefault("sellall.prompt.item.lore", "&7(Click)");
     locale.setDefault("messages.sell", "&a&l+ ${MONEY} &7[ &eSold &o{ITEMS} &eItems&7 ]");
     locale.setDefault("messages.no-access", "&4You do not have access to this Shop");
     locale.setDefault("messages.total", "&2TOTAL: &6+ ${MONEY}");

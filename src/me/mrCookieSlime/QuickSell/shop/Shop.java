@@ -1,5 +1,8 @@
 package me.mrCookieSlime.QuickSell.shop;
 
+import com.github.stefvanschie.inventoryframework.Gui;
+import com.github.stefvanschie.inventoryframework.GuiItem;
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +12,7 @@ import java.util.Objects;
 import me.mrCookieSlime.QuickSell.QuickSell;
 import me.mrCookieSlime.QuickSell.boosters.Booster;
 import me.mrCookieSlime.QuickSell.boosters.BoosterType;
+import me.mrCookieSlime.QuickSell.configuration.CustomItem;
 import me.mrCookieSlime.QuickSell.configuration.Variable;
 import me.mrCookieSlime.QuickSell.transactions.PriceInfo;
 import me.mrCookieSlime.QuickSell.transactions.SellEvent;
@@ -151,6 +155,28 @@ public class Shop {
   }
 
   /**
+   * Parse double configurations.
+   *
+   * @param amount The amount of digits
+   * @param digits How many decimal places to format to.
+   * @return The fixed double.
+   */
+  public static double fixDouble(double amount, int digits) {
+    if (digits == 0) {
+      return (int) amount;
+    }
+    StringBuilder format = new StringBuilder("##");
+    for (int i = 0; i < digits; i++) {
+      if (i == 0) {
+        format.append(".");
+      }
+      format.append("#");
+    }
+    return Double
+        .parseDouble(new DecimalFormat(format.toString()).format(amount).replace(",", "."));
+  }
+
+  /**
    * Check if a player has unlocked this shop.
    *
    * @param p The player to check
@@ -179,16 +205,52 @@ public class Shop {
    * @param type   The type of SellAll
    */
   public void sellAll(Player player, Type type) {
-    List<ItemStack> items = new ArrayList<>();
-    for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
-      ItemStack is = player.getInventory().getItem(slot);
-      if (getPrices().getPrice(is) > 0.0) {
-        items.add(is);
-        player.getInventory().setItem(slot, null);
+    sellAll(player, type, QuickSell.cfg.getBoolean("options.sellall-gui-prompt"));
+  }
+
+  /**
+   * Sell all items in the player's inventory to the shop.
+   *
+   * @param player The player
+   * @param type   The type of SellAll
+   */
+  public void sellAll(Player player, Type type, boolean prompt) {
+    if (prompt) {
+      String title = ChatColor.translateAlternateColorCodes(
+          '&', QuickSell.locale.getTranslation("sellall.prompt.title").get(0)
+      );
+      Gui promptGui = new Gui(1, title);
+      OutlinePane pane = new OutlinePane(0, 0, 9, 1);
+      promptGui.addPane(pane);
+
+      ItemStack button = new CustomItem(
+          Material.LIME_STAINED_GLASS_PANE,
+          QuickSell.locale.getTranslation("sellall.prompt.item.name").get(0),
+          QuickSell.locale.getTranslation("sellall.prompt.item.lore").toArray(new String[0])
+      );
+
+      GuiItem buttonItem = new GuiItem(button, (inventoryClickEvent) -> {
+        inventoryClickEvent.setCancelled(true);
+        sellAll(player, type, false);
+        inventoryClickEvent.getWhoClicked().closeInventory();
+      });
+      for (int i = 0; i < 9; i++) {
+        pane.addItem(buttonItem);
       }
+
+      promptGui.show(player);
+    } else {
+      List<ItemStack> items = new ArrayList<>();
+      for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
+        ItemStack is = player.getInventory().getItem(slot);
+        if (getPrices().getPrice(is) > 0.0) {
+          items.add(is);
+          player.getInventory().setItem(slot, null);
+        }
+      }
+      player.updateInventory();
+      sell(player, false, type, items.toArray(new ItemStack[0]));
     }
-    player.updateInventory();
-    sell(player, false, type, items.toArray(new ItemStack[0]));
   }
 
   /**
@@ -255,21 +317,6 @@ public class Shop {
       }
     }
     player.updateInventory();
-  }
-
-  public static double fixDouble(double amount, int digits) {
-    if (digits == 0) {
-      return (int) amount;
-    }
-    StringBuilder format = new StringBuilder("##");
-    for (int i = 0; i < digits; i++) {
-      if (i == 0) {
-        format.append(".");
-      }
-      format.append("#");
-    }
-    return Double
-        .parseDouble(new DecimalFormat(format.toString()).format(amount).replace(",", "."));
   }
 
   /**
